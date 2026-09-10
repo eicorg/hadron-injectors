@@ -1,0 +1,431 @@
+
+TITLE, "AGS BOOSTER";
+option, -echo;
+option, info=false;
+
+Q  := 1; // Charge in amu.
+NN := 1; // Nucleon count [1]
+
+// Read in Lattice
+call file = "./booster.conversions";
+call file = "./booster.lattice";
+
+// Read in variables
+//call file = "./BOOSTER.PWR";
+
+// DIPOLE CURRENT IN AMPS,   BETWEEN 0 AND 5000
+//IDIPO:= 640.;
+//IDIPO:= 5000.;
+//IDIPO:= 2250.;
+IDIPO:= 340.;
+
+PC   := 0.299792458*BRHO*Q;        // PC in GeV/c
+
+E0 := 0.938272/NN   ; //Particle rest  mass per nucleon [GeV/N]                          
+//EE :=  E0 * GAMMA*NN;            // Total energy
+//EK :=  (EE- (E0*NN));            // Total kin. energy.
+
+EK   := sqrt(PC*PC +(E0*E0*NN*NN)) -(E0*NN);
+BETA2:= 1-1/((1+EK/(E0*NN))*(1+EK/(E0*NN)));
+BETA := sqrt(BETA2);
+EE    := EK + (E0*NN);
+GAMMA := EE/(E0*NN);
+PCT:=  sqrt(EE*EE - (E0*E0*NN*NN));   // Total momentum [GeV/c]
+BDOT :=  0.;
+
+value, Q;
+value, NN;
+value, PC;
+value, PCT;
+value, E0;
+value, EK;
+value, BETA2;
+value, BETA;
+value, EE;
+value, GAMMA;
+
+IQHC:=  0.;
+IQVC:=  0.;
+ISH:=  0;
+ISV:=  0 ;
+ISEBC8F8:= 0.0;
+ISEBB4E4:= 0.0;
+D03kick:= 0.0;
+ANGD6  := 0.;
+
+// these are used for injection bumps.
+X := 0.0;
+XP:= 0.0;
+Y := 0.0;
+YP:= 0.0;
+
+// Slow extraction bumps, at D3 and D6
+// must include BOOSTER.BMP file for these to do anything
+IC7:=0.0;
+ID1:=0.0;
+ID2:=0.0;
+ID4:=0.0;
+ID6:=0.0;
+ID7:=0.0;
+IE1:=0.0;
+
+// Define what to Use and Do
+//
+
+beam, mass = E0*NN, charge=Q, energy=E0*GAMMA*NN, sigt=1.0;
+
+USE, PERIOD=BOOSTER;
+
+// Read in any Error Fields for orbit bumps
+//
+//call file = "./BOOSTER.BMP";
+
+// Get Twiss parameters
+/*
+TWISS, DELTAP=0.;
+*/
+
+//IDIPO:=5100.;
+//IDIPO:=640.;
+//IDIPO:=640.;
+//IDIPO:=2500.;
+//BDOT:=0.0;
+//BDOT:=0.0;
+
+// these are for when the beta bump is on
+//set, IQVC, -45.75;
+//set, IQHC,  23.59;
+// these are with beta-bump off, with tunes at 4.501
+//set, IQVC, -67.97664;
+//set, IQHC, -78.76434;
+// these are for tunes at 4.52
+//set, IQVC, -55.73882;
+//set, IQHC, -66.13935;
+// these are for tunes at 4.98
+//set, IQVC,  233.3;
+//set, IQHC,  232.3;
+IQVC:=0.0;
+IQHC:=0.0;
+
+IQVTB5:=0;
+IQVTB7:=0;
+IQVTC1:=0;
+IQVTC3:=0;
+IQVTC5:=0;
+IQVTC7:=0;
+IQVTD1:=0;
+IQVTD3:=0;
+
+IQHTB6:=0;
+IQHTB8:=0;
+IQHTC2:=0;
+IQHTC4:=0;
+IQHTC8:=0;
+IQHTD2:=0;
+IQHTD4:=0;
+
+QVSTR1:=0.;
+QHSTR1:=0.;
+QVSTR2:=0.;
+QHSTR2:=0.;
+
+/*
+CELL;
+VARY, QVSTR1, STEP=0.001, LOWER=-20., UPPER=20.;
+VARY, QVSTR2, STEP=0.001, LOWER=-20., UPPER=20.;
+VARY, QHSTR1, STEP=0.001, LOWER=-20., UPPER=20.;
+VARY, QHSTR2, STEP=0.001, LOWER=-20., UPPER=20.;
+CONSTRAINT, RANGE=IJFOIL,  BETX=1., BETY=2.;
+SIMPLEX, CALLS=100000,  TOLERANCE= 1.E-08;
+ENDMATCH;
+*/
+
+/* settings for Qx=Qy=4.501
+QVSTR1:= 0.180149;
+QHSTR1:=-0.389995;
+QVSTR2:=-0.553920;
+QHSTR2:=-0.543906;
+*/
+/* settings for Qx=Qy=4.52
+QVSTR1:=3.931145;
+QHSTR1:=-7.849369;
+QVSTR2:=-10.60038;
+QHSTR2:=-11.17709;
+*/
+
+//QVSTR1, 9.5;
+//set, QHSTR1,-10.;
+//set, QVSTR2, 9.5;
+//set, QHSTR2,-10.;
+
+AmpH:=0.0;
+AmpV:=0.0;
+AngH:=0.0;
+AngV:=0.0;
+
+
+/*
+AmpH:=  5.3381e4;
+AmpV:=  2.5841e4;
+AngH:= -0.4067;
+AngV:=  0.6630;
+AmpH:=  5.38084014711E4;
+AmpV:= -2.584106256246E4;
+AngH:= -0.406703998176;
+AngV:=  0.463018201661;
+
+AmpH:=  5.338084014711E4;
+AmpV:= -2.584106256246E4;
+AngH:= -0.045189333131;
+AngV:=  0.073668689073;
+*/
+
+CX:= AmpH*Cos(9*AngH);
+SX:= AmpH*Sin(9*AngH);
+CY:= AmpV*Cos(9*AngV);
+SY:= AmpV*Sin(9*AngV);
+
+QHSTR1:= (BRHO/(10.e5/(2.*pi)))*( -3.63584*CX  -4.88180*SX
+                                   +16.12720*CY +11.01100*SY);
+QHSTR2:= (BRHO/(10.e5/(2.*pi)))*(-10.67600*CX +17.30490*SX
+                                    +1.52789*CY - 6.03983*SY);
+QVSTR1:= (BRHO/(10.e5/(2.*pi)))*(  4.97516*CX - 3.61459*SX
+                                   -11.09430*CY +16.12190*SY);
+QVSTR2:= (BRHO/(10.e5/(2.*pi)))*(-17.47780*CX -10.41050*SX
+                                    +6.14200*CY + 1.20958*SY);
+
+/*
+CELL;
+VARY, QVSTR1, STEP=0.001, LOWER=-20., UPPER=20.;
+VARY, QVSTR2, STEP=0.001, LOWER=-20., UPPER=20.;
+VARY, QHSTR1, STEP=0.001, LOWER=-20., UPPER=20.;
+VARY, QHSTR2, STEP=0.001, LOWER=-20., UPPER=20.;
+CONSTRAINT, RANGE=IJFOIL,  BETX=2., BETY=2.;
+SIMPLEX, CALLS=100000,  TOLERANCE= 1.E-08;
+MIGRAD, CALLS=100000,  TOLERANCE= 1.E-08;
+ENDMATCH;
+*/
+
+/*
+QVSTR1:=   3.931145 ;
+QHSTR1:=  -7.849369;
+QVSTR2:= -10.60038;
+QHSTR2:= -11.17709;
+*/
+
+//set, QVSTR1, 9.5;
+//set, QHSTR1,10.;
+//set, QVSTR2, 9.5;
+//set, QHSTR2, 10.;
+
+HCos9x:=((10.e5/(2.*pi))/(BRHO))*( 0.0105634 * QHSTR1 -0.0278995 * QHSTR2
+                                -0.0141785 * QVSTR1 -0.0464068 * QVSTR2 );
+HSin9x:=((10.e5/(2.*pi))/(BRHO))*( 0.0135332 * QHSTR1 +0.0466999 * QHSTR2
+                                +0.0103903 * QVSTR1 -0.0283834 * QVSTR2 );
+HCos9y:=((10.e5/(2.*pi))/(BRHO))*( 0.0467118 * QHSTR1 -0.00351761 * QHSTR2
+                                -0.0319424 * QVSTR1 -0.0166612 * QVSTR2 );
+HSin9y:=((10.e5/(2.*pi))/(BRHO))*( 0.0319191 * QHSTR1 +0.0166593 * QHSTR2
+                                +0.0467512 * QVSTR1 -0.00350808 * QVSTR2 );
+
+bfact:= 0.0;
+//
+IQVTD3:=    0.0;             //4.998751E+01
+IQVTD1:= -125.0*bfact;         //2.976163E+00  -500  -125
+IQVTC7:=  250.0*bfact;         //2.869236E+02  1000   250
+IQVTC5:=  250.0*bfact;         //3.112319E+02  1000   250
+IQVTC3:= -125.0*bfact;         //1.245282E+01  -500  -125
+IQVTC1:=    0.0      ;   //5.004025E+01
+IQVTB7:=    0.0      ;   //5.509942E+01
+IQVTB5:=    0.0      ;   //-6.187398E+01
+
+IQHTD4:=    0.0      ;   //3.143064E-01
+IQHTD2:= -600.0*bfact;         //-1.004271E+02 -1000 -600
+IQHTC8:= -100.0*bfact;         //4.976390E+01      0 -100
+IQHTC6:=    0.0      ;   //-3.086689E+00
+IQHTC4:= -100.0*bfact;         //5.042632E+01      0 -100
+IQHTC2:= -600.0*bfact;         //-9.980568E+01 -1000 -600
+IQHTB8:=    0.0      ;   //1.125715E+00
+IQHTB6:=    0.0      ;   //9.704315E+00
+//
+
+/*
+CELL;
+VARY, IQHTB6, STEP=0.1, LOWER=-500., UPPER=500.;
+VARY, IQHTB8, STEP=0.1, LOWER=-500., UPPER=500.;
+VARY, IQHTC2, STEP=0.1, LOWER=-500., UPPER=500.;
+VARY, IQHTC4, STEP=0.1, LOWER=-500., UPPER=500.;
+VARY, IQHTC6, STEP=0.1, LOWER=-500., UPPER=500.;
+VARY, IQHTC8, STEP=0.1, LOWER=-500., UPPER=500.;
+VARY, IQHTD2, STEP=0.1, LOWER=-500., UPPER=500.;
+VARY, IQHTD4, STEP=0.1, LOWER=-500., UPPER=500.;
+CONSTRAINT, RANGE=PUEVB1,  BETX=4.1217, BETY=13.073;
+CONSTRAINT, RANGE=PUEHB2,  BETX=12.234, BETY=4.4595;
+CONSTRAINT, RANGE=PUEVB3,  BETX=4.0618, BETY=13.111;
+CONSTRAINT, RANGE=PUEHB4,  BETX=12.243, BETY=4.3515;
+CONSTRAINT, RANGE=PUEVC1,  BETX=4.1245, BETY=13.025;
+CONSTRAINT, RANGE=PUEHC2,  BETX=12.243, BETY=4.3515;
+CONSTRAINT, RANGE=PUEVC3,  BETX=4.0608, BETY=12.906;
+CONSTRAINT, RANGE=PUEVD1,  BETX=4.1245, BETY=13.066;
+CONSTRAINT, RANGE=PUEHD2,  BETX=12.237, BETY=4.4586;
+CONSTRAINT, RANGE=PUEHD6,  BETX=12.681, BETY=4.3849;
+CONSTRAINT, RANGE=PUEVD7,  BETX=4.1102, BETY=13.131;
+CONSTRAINT, RANGE=PUEHD8,  BETX=12.481, BETY=4.4535;
+SIMPLEX, CALLS=100000,  TOLERANCE= 1.E-08;
+ENDMATCH;
+*/
+/*
+AmpH:=  5.338084014711E4;
+AmpV:= -2.584106256246E4;
+AngH:= -0.045189333131;
+AngV:=  0.073668689073;
+
+do, times=6;
+CX:= AmpH*Cos(9*AngH);
+SX:= AmpH*Sin(9*AngH);
+CY:= AmpV*Cos(9*AngV);
+SY:= AmpV*Sin(9*AngV);
+QHSTR1:= (BRHO/(10.e5/(2.*pi)))*( -3.63584*CX  -4.88180*SX
+                                   +16.12720*CY +11.01100*SY);
+QHSTR2:= (BRHO/(10.e5/(2.*pi)))*(-10.67600*CX +17.30490*SX
+                                    +1.52789*CY - 6.03983*SY);
+QVSTR1:= (BRHO/(10.e5/(2.*pi)))*(  4.97516*CX - 3.61459*SX
+                                   -11.09430*CY +16.12190*SY);
+QVSTR2:= (BRHO/(10.e5/(2.*pi)))*(-17.47780*CX -10.41050*SX
+                                    +6.14200*CY + 1.20958*SY);
+HCos9x:= ((10.e5/(2.*pi))/(BRHO))*( 0.0105634 * QHSTR1 -0.0278995 * QHSTR2
+                                -0.0141785 * QVSTR1 -0.0464068 * QVSTR2 );
+HSin9x:= ((10.e5/(2.*pi))/(BRHO))*( 0.0135332 * QHSTR1 +0.0466999 * QHSTR2
+                                +0.0103903 * QVSTR1 -0.0283834 * QVSTR2 );
+HCos9y:=((10.e5/(2.*pi))/(BRHO))*( 0.0467118 * QHSTR1 -0.00351761 * QHSTR2
+                                -0.0319424 * QVSTR1 -0.0166612 * QVSTR2 );
+HSin9y:= ((10.e5/(2.*pi))/(BRHO))*( 0.0319191 * QHSTR1 +0.0166593 * QHSTR2
+                                +0.0467512 * QVSTR1 -0.00350808 * QVSTR2 );
+*/
+//set, IDIPO, IDIPO+300.;
+//
+//set, IQHC, 1100.0;
+//set, IQVC, 1100.0;
+//set, IQHC, 79.0;
+//set, IQVC, 102.0;
+// horiz. 90 amp   4.73   79
+// vert.  -114 amp 4.78   102
+//
+/*
+CELL;
+VARY, IQHC, STEP=0.01, LOWER=-1100., UPPER=1100.;
+VARY, IQVC, STEP=0.01, LOWER=-1100., UPPER=1100.;
+CONSTRAINT, RANGE=#E, MUX=4.629, MUY=4.601403;
+MIGRAD, CALLS=100000,  TOLERANCE= 1.E-09;
+SIMPLEX, CALLS=100000,  TOLERANCE= 1.E-08;
+ENDMATCH;
+*/
+//
+
+/*
+DVCA1i:= 0.;
+DVCA3i:= 0.;
+DVCA5i:= 0.;
+DVCA7i:= 0.;
+
+DHCA2i:= 0.;
+DHCA4i:= 0.;
+DHCA6i:= 0.;
+DHCA8i:= 0.;
+
+IC7:= 0.0;
+ID1:= 0.0;
+ID2:= 0.0;
+ID4:= 0.0;
+ID6:= 0.0;
+ID7:= 0.0;
+IE1:= 0.0;
+call file = "./BOOSTER.BMP";
+*/
+
+value, IDIPO;
+value, AmpH;
+value, AmpV;
+value, AngH;
+value, AngV;
+value, CX;
+value, SX;
+value, CY;
+value, SY;
+value, QHSTR1;
+value, QHSTR2;
+value, QVSTR1;
+value, QVSTR2;
+value, HCos9x;
+value, HSin9x;
+value, HCos9y;
+value, HSin9y;
+value, sqrt(HCos9x*HCos9x+HSin9x*HSin9x);
+value, sqrt(HCos9y*HCos9y+HSin9y*HSin9y);
+value, atan(HSin9x/HCos9x)/9.;
+value, atan(HSin9y/HCos9y)/9.;
+
+//times = 0;
+//while (times<16)
+//{
+//IDIPO= IDIPO+300.;
+
+SELECT, FLAG=TWISS, clear;
+SELECT, FLAG=TWISS, column=name,s,l,angle, betx,bety,dx,dpx,mux,muy;
+TWISS, save, file="twiss", DELTAP=0. ;
+
+
+survey, x0=0, y0=0, z0=0, theta0=0, phi0=0, psi0=0, file="booster.survey", table=survey;
+
+
+
+//times=times+1;
+//};
+
+//system, "/home/sandcreek/kbrown/bin/readtwiss -1 -c -f twiss";
+//system, "grep -i foil twiss.out";
+
+//AngH:= AngH-0.01;
+//AngV:= AngV+0.1;
+
+//enddo;
+
+/*
+IDIPO:=194.748;
+IQHC:= 24.738;
+IQVC:= 25.970;
+TWISS,  DELTAP=0.0;
+IDIPO:=196.652;
+IQHC:= 31.555;
+IQVC:= 41.403;
+TWISS,  DELTAP=0.0;
+IDIPO:=202.606;
+IQHC:= 46.747;
+IQVC:= 52.465;
+TWISS,  DELTAP=0.0;
+IDIPO:=718.887;
+IQHC:= 100.190;
+IQVC:= 119.301;
+TWISS,  DELTAP=0.0;
+IDIPO:=822.372;
+IQHC:= 116.890;
+IQVC:= 139.591;
+
+TWISS,  DELTAP=0.0;
+IDIPO:=926.687;
+IQHC:= 132.553;
+IQVC:= 158.444;
+TWISS,  DELTAP=0.0;
+IDIPO:=2178.464;
+IQHC:= 325.231;
+IQVC:= 371.184;
+TWISS,  DELTAP=0.0;
+*/
+//   names
+// SPTMD6 D6ds SVD7 PUEVD7 QVD7 DHD7 SHD8 PUEHD8 QHD8 DHD8
+//
+ptc_create_universe;
+beam, particle = proton, energy = ee;
+ptc_create_layout, model=2,method=2,nst=1;
+ptc_script,file='make_booster'; 
+stop;
+return;

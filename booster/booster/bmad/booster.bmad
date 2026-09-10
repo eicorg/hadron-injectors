@@ -1,0 +1,19 @@
+! BMAD translation of the cleaned AGS Booster MAD-X lattice.
+parameter[particle] = proton
+parameter[geometry] = closed
+beginning[p0c] = 3.440803921e8
+
+Q = 1;
+NN = 1;
+X = 0;
+XP = 0;
+Y = 0;
+YP = 0;
+
+call, file = "conversions.bmad"
+call, file = "elements/elements.bmad"
+call, file = "beamlines/beamlines.bmad"
+call, file = "states/baseline.bmad"
+
+ring: line = (BOOSTER)
+use, ring
