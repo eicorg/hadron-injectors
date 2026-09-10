@@ -1,0 +1,50 @@
+// Mechanically extracted from source/madx/xags.lattice:1313-1360; do not change physics here.
+SUPERD:   LINE:= (                           
+MM_D01BF , D2S  ,                                //D1
+MM_D02BF , DPUE , PUE_D02  , DHCD02, DVCD02, D2TX,  //D2
+MM_D03CD , DSQ  , QV_D03  , QP_D03  , DSQ   ,        //D3
+MM_D04CD , DPUE , PUE_D04  , D2LX  ,                //D4
+MM_D05AF , D2H  , D05EIPM, D2H   ,                  //D5
+MM_D06AF , D2L  ,                                //D6
+MM_D07CD , DSS  , SXV_D07   , DSS   ,                //D7
+MM_D08CD , DPUE , PUE_D08  , DHCD08, DVCD08, D2TX,  //D8
+MM_D09BF , D2S  ,                                //D9
+MM_D10BF, SSD10, DSG10 ,                        //D10
+//D10BF,D10,D10,                              &!old D10
+MM_D11BD, D2S  ,                                //D11
+MM_D12BD, DPUE , PUE_D12 , DHCD12, DVCD12, D2TX,  //D12
+MM_D13CF, DSS  , SXH_D13   , DSS   ,                //D13
+MM_D14CF, DPUE , PUE_D14 , D2LX  ,                //D14
+MM_D15AD, D2H  , D15EIPM, D2H   ,                        //D15
+MM_D16AD, D2L  ,                                //D16
+MM_D17CF, DSQ  , QH_D17  , QS_D17  , DSQ   ,        //D17
+MM_D18CF, DPUE , PUE_D18 , DHCD18, DVCD18, D2TX,  //D18
+MM_D19BD, D2S  ,                                //D19
+MM_D20BD, SSD20  , DSG10)                        ; //D20
+//D20BD, D10  , D10)                           !old D20
+
+SUPERDnk:   LINE:= (                         
+MM_D01BF , D2S  ,                                //D1
+MM_D02BF , DPUE , PUE_D02  , DHCD02, DVCD02, D2TX,  //D2
+MM_D03CD , DSQ  , QV_D03  , QP_D03  , DSQ   ,        //D3
+MM_D04CD , DPUE , PUE_D04  , D2LX  ,                //D4
+MM_D05AF , D2H  ,  D05EIPM, D2H   ,                  //D5
+MM_D06AF , D2L  ,                                //D6
+MM_D07CD , qshres_D07,  DD07_1, SXV_D07    ,                //D7
+MM_D08CD , DPUE , PUE_D08  , DHCD08, DVCD08, D2TX,  //D8
+MM_D09BF , D2S  ,                                //D9
+//D10BF, SSD10, DSG10 ,                        &!D10
+MM_D10BF, D10  , D10,                           //old D10
+MM_D11BD, D2S  ,                                //D11
+MM_D12BD, DPUE , PUE_D12 , DHCD12, DVCD12, D2TX,  //D12
+MM_D13CF, DSS  , SXH_D13   , DSS   ,                //D13
+MM_D14CF, DPUE , PUE_D14 , D2LX  ,                //D14
+MM_D15AD, D2H  , D15EIPM, D2H   ,                        //D15
+MM_D16AD, D2L  ,                                //D16
+MM_D17CF, DSQ  , QH_D17  , QS_D17  , DSQ   ,        //D17
+MM_D18CF, DPUE , PUE_D18 , DHCD18, DVCD18, D2TX,  //D18
+MM_D19BD, D2S  ,                                //D19
+//D20BD, SSD20  , DSG10)                        !D20
+MM_D20BD, D10  , D10)                           ; //old D20
+
+return;

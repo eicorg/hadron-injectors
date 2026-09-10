@@ -1,0 +1,11 @@
+# Generated lattice output and caches
+*.digested*
+*.out
+*.survey
+*.twiss
+*.log
+core.*
+# Local editor and Python caches
+__pycache__/
+*.pyc
+.DS_Store

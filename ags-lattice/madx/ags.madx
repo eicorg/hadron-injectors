@@ -1,0 +1,274 @@
+option,-echo;
+TITLE, "AGS for Online Model (VHS, KAB, NM)";
+
+AGS_INITIALIZED := 1;  // This file only needs to be called once. Files produced by the online model or MadxFromSnaprampCmd
+                       //   tool will check this variable before calling this file again.
+
+// Physics/machine constants (implemented as MAD-X variable parameters)
+
+  C := 2.99792458e8              ; // speed of light [m/sec]
+  RHO := 85.3785                ; // AGS curv. radius [m] = 536.448/2pi
+
+//  K2FBDCOEF := -0.00             ; // Coefficient for BDOT contribution to main magnet
+//  K2DBDCOEF := -0.00             ; //     sextupole moment. (focusing, defocussing)
+
+// Beam parameters. Starting values represent pol proton injection, will be changed
+//		    by online environment.               
+
+
+  Q   := 1; // Charge in amu.
+  NN  := 1; // Nucleon count [1]
+
+  E0    :=  0.938272/NN   ; //Particle rest  mass per nucleon [GeV/N]                          
+  GAMMA :=  2.509984;
+
+// Constants
+spinG := 1.79284739; // Anomalous gyromagnetic ratio of a proton
+
+
+
+// Derived beam parameters.
+  EE      :=  E0 * GAMMA*NN;            // Total energy (if E0 is rest energy /nucleon) in GeV
+  EK      :=  (EE- (E0*NN));            // Total kin. energy.
+  PCT     :=  sqrt(EE*EE - (E0*E0*NN*NN));   // Total momentum [GeV/c]
+  BETA    :=  sqrt(1.0-1.0/(GAMMA*GAMMA)); 
+  BRHO    :=  1.e9*PCT/(C*Q);
+  BField  :=  BRHO/RHO;
+
+ 
+  MOM := 0.299792458* BRHO * Q / NN;  //  momentum [GeV/(c)]
+  PC  := MOM;
+
+  value, EE;
+  value, EK;
+  value, PCT;
+  value, BETA;
+  value, BRHO;
+  value MOM;
+  value, PC;
+
+  CCbit := -1; // This is the bit that determines whether you go around the AGS clockwise or counter.
+              //  +1 = clockwise,  -1 = counterclockwise
+
+
+
+  value, gamma;
+  value, EE;
+  value, EK;
+  value, PC;
+  value, BETA;
+  value, BRHO;
+  value, MOM;
+
+
+//  beam, particle=proton, energy=EE, sigt=1.0;
+
+beam, mass = E0*NN, charge=Q, gamma=GAMMA, sigt=1.0;
+
+
+// Other file of the online model:
+//	xags.conversions     : polynomials and transfer function to get magnet strength
+//			       from magnet currents.
+
+//	xags.rbends_no_k1k2 : definitions of main magnet elements, treated as pure
+//			       dipoles.  Quad and sextupole moments added in xags.errors.
+
+//	xags.lattice	     : definitions of the rest of the lattice elements.
+
+//	xags.rbends_add_k1k2 :  adds the quad/sext moment to main magnets as 'errors'.
+//				(NOTE: If the momentum (MOM, PC) variables change, you MUST   )
+//				(      call this file again, since errors do not automatically)
+//				(      update with a change of their parameters.              )
+
+/*
+option, rbarc=false; // The lengths of the main magnet RBENDS are specified as the arc lengths, NOT
+                     //   the straight line lengths.  If you make this 'true', you have to 
+                     //   change the arc lengths appropriately, otherwise you get negative drift length fatal errors                      //   This seems to be due to a relatively recent change to madx.  -- vhs 12/6/2018
+*/
+
+call, file = "strengths.madx";
+
+
+//CALL, FILE = "/operations/app_store/AgsModelPlayer/madx/xags.rbends_no_k1k2";
+call, file = "elements/main_magnets.madx";
+
+call, file = "elements/elements_and_insertions.madx";
+call, file = "superperiods/a.madx";
+call, file = "superperiods/b.madx";
+call, file = "superperiods/c.madx";
+call, file = "superperiods/d.madx";
+call, file = "superperiods/e.madx";
+call, file = "superperiods/f.madx";
+call, file = "superperiods/g.madx";
+call, file = "superperiods/h.madx";
+call, file = "superperiods/i.madx";
+call, file = "superperiods/j.madx";
+call, file = "superperiods/k.madx";
+call, file = "superperiods/l.madx";
+call, file = "beamlines.madx";
+
+call, file = "snakes/CSNK_DRIFT.madx";
+call, file = "snakes/WSNK_DRIFT.madx";
+
+
+// Have to choose a beamline with 'use' before we add K1, K2 'errors' to main magnets.
+ 	
+mstart : marker;
+bb     : beambeam;  // Used as a place holder by UAL Poincare plots.
+mend   :  marker;
+
+ring : line = (mstart,  AGSnk, mend);
+
+use, period=ring;
+//call, file=  "/operations/app_store/AgsModelPlayer/madx/xags.rbends_add_k1k2";
+
+momShift = 0; // momentum shift (dp/p);
+
+// How does xags.bumps handle the errors?
+csnkDip := 1;  // 1 = apply dipole error from csnk blw
+csnkK1  := 1;  // 1 = apply quad error from csnk blw
+L20Dip  := 1;  // 1 = apply dipole error from injection blw
+L20K1   := 1;  // 1 = apply uqad error from injection blw
+
+//----------------------------------------------------
+// Polarities for tune quads, chrom sext.  Applied after the transfer functions in xags.conversions
+//----------------------------------------------------
+
+
+
+//PQH :=  1            ; // sign bit for h. quads
+//PQV :=  -1            ; // sign bit for v. quads
+//PSH :=  1            ; // sign bit for h. sext.
+//PSV :=  -1            ; // sign bit for v. sext.
+
+//PQH_A17 := -1;          // sign bits for two of the snake compensation quads
+//PQH_E17 := -1;
+
+//----------------------------------------------------
+// Just initializing all currents to zero for 'bare' AGS.
+//----------------------------------------------------
+
+
+XQH := 0.             ; // Horizontal Quads current
+XQV := 0.             ; // Vertical Quads current
+XQS := 0.             ; // Skew Quads current
+XSH := 0.             ; // Horizontal Sextupole current
+XSV := 0.             ; // Vertical Sextupole current
+XSD := 0.             ; // Drive Sextupole current
+
+XSB_FHLB03 = 0;
+XSB_CEIK03 = 0;
+XSB_FHLB17 = 0;
+XSB_CEIK17 = 0;
+
+
+
+//IPOL :=0              ; // Polarization quad current
+
+// Snake compensation stuff
+
+
+a16_19_blw_I  := 0;		// a16-19_blw  [A]
+A20_BLW_I     := 0;		// A20_BLW_total  [A]
+b2_5_blw_I    := 0;		// b2-5_blw  [A]
+
+
+b3_quad_I     :=  0;
+a17_quad_I    :=  0;
+a19_quad_I    :=  0;
+b1_quad_I     :=  0;
+e17_quad_I    :=  0;
+f3_quad_I     :=  0;
+e19_f1_quad_I :=  0;
+
+
+//----------------------------------------------------
+BDOT:= 0;
+
+//KPOL    := 0.     ; // Polarized Quads strength
+XGQHP   := 0.     ; // Gamma Quads Currents
+XGQHN   := 0.     ; // Gamma Quads Currents
+H20kick := 0.0         ; // H20 kick in rad
+F05kick := 0.0         ; // F05 kick in rad
+F10kick := 0.0         ; // F10 kick in rad
+G10kick := 0.0;
+A5kick  := 0.0;
+// The beam declaration above is the single beam definition for this entry point.
+
+IF7BMP := 0.0;
+IH20BMP := 0.0;
+
+IG10A := 0.0;
+IG10B := 0.0;
+IG10C := 0.0;
+
+ZH20BMP := 0.00; // Not used
+ZF7BMP  := 0.00; // Not used
+ZL20BMP := 0.00; // Not used
+ZPTBMP  := 0.00; // Not used
+ZANGBMP := 0.00; // Not used
+ZANTBMP := 0.00; // Not used
+ZJ10BMP := 0.00; // J10 bump
+
+
+value, K1AD;
+value, k1AF;
+value, K1BD;
+value, k1BF;
+value, K1BD;
+value, k1BF;
+
+
+value, ANGA;
+value, ANGB;
+value, ANGC;
+
+
+
+value, kqh;
+value, kqv;
+
+
+
+//===================================================
+//  HERE ENDS THE BARE AGS
+//===================================================
+
+/*
+
+value, gamma;
+value, EK;
+value, EE;
+value, PC;
+value, BRHO;
+value, BRHO2;
+
+
+value, xqh;
+value, xqv;
+
+value, kqh;
+value, kqv;
+
+value, Bfield;
+
+
+value, D10->l;
+
+*/
+
+value, PQH_A17; 
+value,PQH_B17; 
+value,PQH_C17; 
+value,PQH_D17; 
+value,PQH_E17; 
+value,PQH_F17; 
+value,PQH_G17; 
+value,PQH_H17; 
+value,PQH_I17; 
+value,PQH_J17; 
+value,PQH_K17; 
+value,PQH_L17; 
+
+
+return;

@@ -1,0 +1,79 @@
+// Mechanically extracted from source/madx/xags.lattice:1361-1437; do not change physics here.
+SUPERE:   LINE:= (                           
+MM_E01BF , D2S  ,                                //E1
+MM_E02BF , DPUE , PUE_E02  , DHCE02, DVCE02, D2TX,  //E2
+MM_E03CD , DSQ  , QV_E03  , QP_E03  , DSQ   ,        //E3
+MM_E04CD , DPUE , PUE_E04  , D2LX  ,                //E4
+MM_E05AF , DSS  , SXDP_E05  , DSS   ,                //E5
+MM_E06AF , D2L  ,                                //E6
+MM_E07CD , DSS  , SXV_E07   , DSS   ,                //E7
+MM_E08CD , DPUE , PUE_E08  , DHCE08, DVCE08, D2TX,  //E8
+MM_E09BF , D2S  ,                                //E9
+MM_E10BF, SSE10, DSG10 ,                        //E10
+//E10BF,D10,D10,                              &!old E10
+MM_E11BD, D2S  ,                                //E11
+MM_E12BD, DPUE , PUE_E12 , DHCE12, DVCE12, D2TX,  //E12
+MM_E13CF, DSS  , SXH_E13   , DSS   ,                //E13
+MM_E14CF, DPUE , PUE_E14 , D2LX  ,                //E14
+MM_E15AD, D2H  , E15IPM, D2H   ,                //E15
+MM_E16AD, D2L  ,                                //E16
+MM_E17CF, DSQ  , QH_E17  , QGTR1e , DSQ   ,        //E17
+MM_E18CF, DPUE , PUE_E18 , DHCE18, DVCE18, D2TX,  //E18
+MM_E19BD, D2S  ,                                //E19
+MM_E20BD, SSE20, DSG10)                          ; //E20
+//E20BD,D10,D10)!old E20
+
+wsnk_mark : marker;
+
+SUPEREnk:   LINE:= (                         
+MM_E01BF , D2S  ,                                //E1
+MM_E02BF , DPUE , PUE_E02  , DHCE02, DVCE02, D2TX,  //E2
+MM_E03CD , DSQ  , QV_E03  , QP_E03  , DSQ   ,        //E3
+MM_E04CD , DPUE , PUE_E04  , D2LX  ,                //E4
+MM_E05AF ,  qshres_E05, DE05_1, SXDP_E05    ,                //E5
+MM_E06AF , D2L  ,                                //E6
+MM_E07CD , DSS  , SXV_E07   , DSS   ,                //E7
+MM_E08CD , DPUE , PUE_E08  , DHCE08, DVCE08, D2TX,  //E8
+MM_E09BF , D2S  ,                                //E9
+//E10BF, SSE10, DSG10 ,                        &!E10
+MM_E10BF,D10,D10,                              //old E10
+MM_E11BD, D2S  ,                                //E11
+MM_E12BD, DPUE , PUE_E12 , DHCE12, DVCE12, D2TX,  //E12
+MM_E13CF, DSS  , SXH_E13   , DSS   ,                //E13
+MM_E14CF, DPUE , PUE_E14 , D2LX  ,                //E14
+MM_E15AD, D2H  ,E15IPM,  D2H   ,                        //E15
+MM_E16AD, D2L  ,                                //E16
+MM_E17CF, DSQ  , QH_E17  ,D7cm, QGTR1e , DSQm7   ,        //E17
+MM_E18CF, DPUE , PUE_E18 , DHCE18, DVCE18, D2TX,  //E18
+MM_E19BD, D2SX, QThin_E19  , D2SX,
+MM_E20BD,D10SKH, WSNK,wsnk_mark,D10SKH); 
+
+SUPERE_MAT:   LINE:= (                         
+MM_E01BF , D2S  ,                                //E1
+MM_E02BF , DPUE , PUE_E02  , DHCE02, DVCE02, D2TX,  //E2
+MM_E03CD , DSQ  , QV_E03  , QP_E03  , DSQ   ,        //E3
+MM_E04CD , DPUE , PUE_E04  , D2LX  ,                //E4
+MM_E05AF , DSS  , SXDP_E05  , DSS   ,                //E5
+MM_E06AF , D2L  ,                                //E6
+MM_E07CD , DSS  , SXV_E07   , DSS   ,                //E7
+MM_E08CD , DPUE , PUE_E08  , DHCE08, DVCE08, D2TX,  //E8
+MM_E09BF , D2S  ,                                //E9
+//E10BF, SSE10, DSG10 ,                        &!E10
+MM_E10BF,D10,D10,                              //old E10
+MM_E11BD, D2S  ,                                //E11
+MM_E12BD, DPUE , PUE_E12 , DHCE12, DVCE12, D2TX,  //E12
+MM_E13CF, DSS  , SXH_E13   , DSS   ,                //E13
+MM_E14CF, DPUE , PUE_E14 , D2LX  ,                //E14
+MM_E15AD, D2H  ,E15IPM,  D2H   ,                        //E15
+MM_E16AD, D2L  ,                                //E16
+MM_E17CF, DSQ  , QH_E17  ,D7cm, QGTR1e , DSQm7   ,        //E17
+MM_E18CF, DPUE , PUE_E18 , DHCE18, DVCE18, D2TX,  //E18
+MM_E19BD, D2SX, QThin_E19  , D2SX,                                //E19
+//E20BD, SSE20, DSG10)                          !E20
+MM_E20BD,D10SKH, WSNK_MAT,D10SKH); //old E20
+
+
+
+F13MIDDLE: MARKER;
+
+return;

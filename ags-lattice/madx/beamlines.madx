@@ -1,0 +1,125 @@
+// Mechanically extracted from source/madx/xags.lattice:1913-2036; do not change physics here.
+AGSp:   LINE:= (SUPERA, SUPERB, SUPERC, SUPERD, SUPERE, SUPERFnk, 
+               SUPERG, SUPERH, SUPERI, SUPERJ, SUPERK, SUPERL);
+
+
+
+// AGS with no 10' section kickers
+AGSnk:   LINE:= (SUPERAnk, SUPERBnk, SUPERCnk, SUPERDnk, SUPEREnk, SUPERFnk, 
+                 SUPERGnk, SUPERHnk, SUPERInk, SUPERJnk, SUPERKnk, SUPERLnk);
+
+
+//AGSnk:   LINE:= (SUPERGnk, SUPERHnk, SUPERInk, SUPERJnk, SUPERKnk, SUPERLnk,
+//                SUPERAnk, SUPERBnk, SUPERCnk, SUPERDnk, SUPEREnk, SUPERFnk);
+
+
+
+
+AGSNM:   LINE:= (SUPERANM, SUPERBnk, SUPERCnk, SUPERDnk, SUPEREnk, SUPERFnk, 
+                 SUPERGnk, SUPERHnk, SUPERInk, SUPERJnk, SUPERKnk, SUPERLNM);
+
+
+//--------------------------------------------------------------------------
+// A long AGS, from A super around and through up to G super
+
+LAGS:   LINE:= (AGS, SUPERAnk, SUPERBnk, SUPERCnk, SUPERDnk, 
+                SUPEREnk, SUPERF);
+
+LLAGS:   LINE:= (  AGS, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, 
+                  AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, 
+                  AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, 
+                  AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk);
+
+//--------------------------------------------------------------------------
+// Additional Lines, primarily used for SEB modeling - K. Brown (8/31/98)
+//
+// an AGS that starts at the US face of F5 septum magnet. For SEB  1/8/98 KAB
+// H20 not included. F5 and F10 are included.
+//--------------------------------------------------------------------------
+fAGS:   LINE:= (SUPERF2, SUPERF3, SUPERG, SUPERHnk, SUPERInk, SUPERJnk, 
+SUPERKnk, SUPERLnk, SUPERAnk, SUPERBnk, SUPERCnk, SUPERDnk, SUPEREnk, SUPERF1);
+
+fhAGS: LINE=(SUPERF2, SUPERF3, SUPERG, SUPERH1, SUPERH2, SUPERInk, SUPERJnk, 
+SUPERKnk, SUPERLnk, SUPERAnk, SUPERBnk, SUPERCnk, SUPERDnk, SUPEREnk, SUPERF1);
+
+// starts at E1
+//fAGS:   LINE:= (SUPEREnk, SUPERF, SUPERGnk, SUPERHnk, SUPERInk, SUPERJnk, &
+//SUPERKnk, SUPERLnk, SUPERAnk, SUPERBnk, SUPERCnk, SUPERDnk)
+
+//--------------------------------------------------------------------------
+// an AGS that starts at the US end of H20 septum magnet. For SEB  1/28/98 KAB
+//--------------------------------------------------------------------------
+hAGS:   LINE:= ( SUPERH2, SUPERI, SUPERJ, 
+                 SUPERK, SUPERL, SUPERA, SUPERB, SUPERC, SUPERD, SUPERE, 
+                 SUPERF1,SUPERF2, SUPERF3, SUPERG, SUPERH1);
+
+// This one starts at A super, but includes H20 septum, no F5 or F10
+
+ahAGS:   LINE:= (SUPERA, SUPERB, SUPERC, SUPERD, SUPERE, SUPERF, 
+                 SUPERG, SUPERH1, SUPERH2, SUPERI, SUPERJ, 
+                 SUPERK, SUPERL);
+
+//--------------------------------------------------------------------------
+// an AGS that starts at Super A but with elements For SEB  1/26/98 KAB
+// no H20, F5 and F10 included
+//--------------------------------------------------------------------------
+fpAGS:   LINE:= (SUPERA, SUPERB, SUPERC, SUPERD, SUPERE, SUPERF1, 
+SUPERF2, SUPERF3, SUPERG, SUPERH, SUPERI, SUPERJ,SUPERK, SUPERL);
+
+//--------------------------------------------------------------------------
+// An AGS that starts at the US end of H20 septum magnet.   This is 1 AGS
+// with an H20 followed by 1 AGS that has no H20, followed by an AGS that 
+// starts at H20 and Ends with F10.   This is to allow tracking with the 
+// septum magnets all turned on, and allowing the beam to pass through each
+// septum magnet just once. 
+//--------------------------------------------------------------------------
+//
+//  (THINGS GET A BIT MESSY BELOW HERE.  WILL CLEAN UP SOMEDAY....)
+// end of H20, just before location of H20, but without H20
+//
+NotH20: Drift,  L := LES;
+noH20:  LINE:= (NotH20, DSH20);
+//
+// from just before H20, without H20, to end of superE
+//
+H20toE20noes: LINE:= ( noH20, SUPERI, SUPERJ,SUPERK, SUPERL, SUPERA, 
+                       SUPERB, SUPERC, SUPERD, SUPERE);
+// start of superF to end of superH, just before H20
+//
+F1toH20nof5:  LINE:= (SUPERF, SUPERG, SUPERH1) ;
+//
+// 1 AGS with just H20, 1 AGS with no H20, 1 AGS with F5 and F10
+//
+ohfAGS: LINE:= (SUPERH2, SUPERI, SUPERJ, SUPERK, SUPERL, SUPERA, 
+                SUPERB, SUPERC, SUPERD, SUPERE, SUPERF, SUPERG, SUPERH1,
+                H20toE20noes, F1toH20nof5, H20toE20noes, 
+                SUPERF1, SUPERF2) ;
+
+hfAGS:   LINE:= (SUPERH2, SUPERI, SUPERJ, SUPERK, SUPERL, 
+                 AGS, AGS, 
+                 SUPERA, SUPERB, SUPERC, SUPERD, SUPERE, 
+                 SUPERF1, SUPERF2) ;
+//
+// for orbits, it is not a good idea to start at H20, start at A and go through.
+//
+bahfAGS: LINE:= (SUPERA, SUPERB, SUPERC, SUPERD, SUPERE, SUPERF, SUPERG, 
+                 SUPERH1,SUPERH2, SUPERI, SUPERJ, SUPERK, SUPERL, SUPERA, 
+                 SUPERB, SUPERC, SUPERD, SUPERE, SUPERF, SUPERG, SUPERH1,
+                 H20toE20noes, F1toH20nof5, H20toE20noes, 
+                 SUPERF1, SUPERF2, SUPERF3, SUPERG, SUPERH, SUPERI, SUPERJ, 
+                 SUPERK, SUPERL) ;
+
+ahfAGS: LINE:= (SUPERA, SUPERB, SUPERC, SUPERD, SUPERE, SUPERF, SUPERG, 
+                SUPERH1,SUPERH2, SUPERI, SUPERJ, SUPERK, SUPERL, 
+                AGS, AGS, 
+                SUPERA, SUPERB, SUPERC, SUPERD, SUPERE, 
+                SUPERF1, SUPERF2, SUPERF3, SUPERG, SUPERH, SUPERI, SUPERJ, 
+                SUPERK, SUPERL);
+
+cahfAGS:   LINE:= (haAGS, AGS, AGS, AGS);
+//
+// for tracking from F5 to F13.
+//
+f5tof13: LINE:= (SectF5F13);
+
+return;

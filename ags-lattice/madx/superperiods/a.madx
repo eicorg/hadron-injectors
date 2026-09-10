@@ -1,0 +1,110 @@
+// Mechanically extracted from source/madx/xags.lattice:1103-1211; do not change physics here.
+SUPERA:   LINE:= (                           
+MM_A01BF,  D2S  ,                                //A1
+MM_A02BF,  DPUE , PUE_A02  , DHCA02, DVCA02, D2TX,  //A2
+MM_A03CD,  DSQ  , QV_A03  , QP_A03  , DSQ   ,        //A3
+MM_A04CD,  DPUE , PUE_A04  , D2LX  ,                //A4
+MM_A05AF,  D2H  , A05KICKER, D2H   ,                //A5
+MM_A06AF,  D2L  ,                                //A6
+MM_A07CD,  DSS  , SXV_A07   , DSS,                   //A7
+MM_A08CD,  DPUE , PUE_A08  , DHCA08, DVCA08, D2TX,  //A8
+MM_A09BF,  D2S  ,                                //A9
+MM_A10BF, SSA10, DSG10,                         //A10 including kicker at A10
+//A10BF,D10,D10,                              &!old A10
+MM_A11BD, D2S  ,                                //A11
+MM_A12BD, DPUE , PUE_A12 , DHCA12, DVCA12, D2TX,  //A12
+MM_A13CF, DSS  , SXH_A13   , DSS,                   //A13
+MM_A14CF, DPUE , PUE_A14 , D2LX,                  //A14
+MM_A15AD, D2H  , mwa15, D2H,                           //A15
+MM_A16AD, D2L  ,                                //A16
+MM_A17CF, DSQ  , QH_A17  , QGTR1a , DSQ,           //A17
+MM_A18CF, DPUE , PUE_A18 , DHCA18, DVCA18, D2TX,  //A18
+MM_A19BD, D2S  ,                                //A19
+MM_A20BD, SSA20, DSG10)                          ; //A20 including kicker at A20
+// old A20
+//A20BD,D10,D10)!A20
+
+
+
+//option, echo;
+SUPERAnk:   LINE:= (                         
+MM_A01BF,  D2S  ,                                //A1
+MM_A02BF,  DPUE , PUE_A02  , DHCA02, DVCA02, D2TX,  //A2
+MM_A03CD,  DSQ  , QV_A03  , QP_A03  , DSQ   ,        //A3
+MM_A04CD,  DPUE , PUE_A04  , D2LX  ,                //A4
+MM_A05AF,  D2H  , A05KICKER, D2H   ,                //A5
+MM_A06AF,  D2L  ,                                //A6
+MM_A07CD,  DSS  , SXV_A07   , DSS,                   //A7
+MM_A08CD,  DPUE , PUE_A08  , DHCA08, DVCA08, D2TX,  //A8
+MM_A09BF,  D2S  ,                                //A9
+//A10BF, SSA10, DSG10,                         &!A10 including kicker at A10
+MM_A10BF, DA10_1  ,TUNEKICK_H, qshres_A10, TUNEKICK_V, DA10_2,    //old A10
+MM_A11BD, D2S  ,                                //A11
+MM_A12BD, DPUE , PUE_A12 , DHCA12, DVCA12, D2TX,  //A12
+MM_A13CF, DSS  , SXH_A13   , DSS,                   //A13
+MM_A14CF, DPUE , PUE_A14 , D2LX,                  //A14
+MM_A15AD, D2H  , mwa15,D2H,                           //A15
+MM_A16AD, D2L  ,                                //A16
+MM_A17CF, DSQ  , QH_A17  ,D7cm, QGTR1a , DSQm7,           //A17
+MM_A18CF, DPUE , PUE_A18 , DHCA18, DVCA18, D2TX,  //A18
+MM_A19BD, D2SX, QThin_A19, D2SX  ,                                //A19
+//A20BD, SSA20, DSG10)                          !A20 including kicker at A20
+MM_A20BD, D10SKH, CSNK, csnk_mark ,D10SKH); //A20
+
+
+
+SUPERA_MAT:  LINE=(
+MM_A01BF,  D2S  ,                                //A1
+MM_A02BF,  DPUE , PUE_A02  , DHCA02, DVCA02, D2TX,  //A2
+MM_A03CD,  DSQ  , QV_A03  , QP_A03  , DSQ   ,        //A3
+MM_A04CD,  DPUE , PUE_A04  , D2LX  ,                //A4
+MM_A05AF,  D2H  , A05KICKER, D2H   ,                //A5
+MM_A06AF,  D2L  ,                                //A6
+MM_A07CD,  DSS  , SXV_A07   , DSS,                   //A7
+MM_A08CD,  DPUE , PUE_A08  , DHCA08, DVCA08, D2TX,  //A8
+MM_A09BF,  D2S  ,                                //A9
+//A10BF, SSA10, DSG10,                         &!A10 including kicker at A10
+MM_A10BF, D10  , D10,                              //old A10
+MM_A11BD, D2S  ,                                //A11
+MM_A12BD, DPUE , PUE_A12 , DHCA12, DVCA12, D2TX,  //A12
+MM_A13CF, DSS  , SXH_A13   , DSS,                   //A13
+MM_A14CF, DPUE , PUE_A14 , D2LX,                  //A14
+MM_A15AD, D2H  , D2H,                           //A15
+MM_A16AD, D2L  ,                                //A16
+MM_A17CF, DSQ  , QH_A17  ,D7cm, QGTR1a , DSQm7,           //A17
+MM_A18CF, DPUE , PUE_A18 , DHCA18, DVCA18, D2TX,  //A18
+MM_A19BD, D2SX, QThin_A19, D2SX  ,                                //A19
+//A20BD, SSA20, DSG10)                          !A20 including kicker at A20
+MM_A20BD, D10SKH, CSNK, D10SKH); //A20
+
+
+
+
+
+
+
+SUPERANM:   LINE:= ( D10,                        
+MM_A01BF,  D2S  ,                                //A1
+MM_A02BF,  DPUE , PUE_A02  , DHCA02, DVCA02, D2TX,  //A2
+MM_A03CD,  DSQ  , QV_A03  , QP_A03  , DSQ   ,        //A3
+MM_A04CD,  DPUE , PUE_A04  , D2LX  ,                //A4
+MM_A05AF,  D2H  , A05KICKER, D2H   ,                //A5
+MM_A06AF,  D2L  ,                                //A6
+MM_A07CD,  DSS  , SXV_A07   , DSS,                   //A7
+MM_A08CD,  DPUE , PUE_A08  , DHCA08, DVCA08, D2TX,  //A8
+MM_A09BF,  D2S  ,                                //A9
+//A10BF, SSA10, DSG10,                         &!A10 including kicker at A10
+MM_A10BF, D10  , D10,                              //old A10
+MM_A11BD, D2S  ,                                //A11
+MM_A12BD, DPUE , PUE_A12 , DHCA12, DVCA12, D2TX,  //A12
+MM_A13CF, DSS  , SXH_A13   , DSS,                   //A13
+MM_A14CF, DPUE , PUE_A14 , D2LX,                  //A14
+MM_A15AD, D2H  , D2H,                           //A15
+MM_A16AD, D2L  ,                                //A16
+MM_A17CF, DSQ  , QH_A17  , QGTR1a , DSQ,           //A17
+MM_A18CF, DPUE , PUE_A18 , DHCA18, DVCA18, D2TX,  //A18
+MM_A19BD, D2S  ,                                //A19
+//A20BD, SSA20, DSG10)                          !A20 including kicker at A20
+MM_A20BD, D10  ,D10); //A20
+
+return;

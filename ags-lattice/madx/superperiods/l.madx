@@ -1,0 +1,78 @@
+// Mechanically extracted from source/madx/xags.lattice:1838-1912; do not change physics here.
+SUPERL:   LINE:= (                              
+MM_L01BF , D2S  ,                                   //L1
+MM_L02BF , DPUE , PUE_L02_ , DHCL02, DVCL02, D2TX,      //L2
+MM_L03CD , DSQ  , QV_L03 , QP_L03  , DSQ   ,            //L3
+MM_L04CD , DPUE , PUE_L04 , D2LX  ,                    //L4
+MM_L05AF , D2H  , D2H  ,                            //L5
+MM_L06AF , D2L  ,                                   //L6
+MM_L07CD , DSS  , SXV_L07  , DSS   ,                    //L7
+MM_L08CD , DPUE , PUE_L08 , DHCL08, DVCL08, D2TX,      //L8
+MM_L09BF , D2S  ,                                   //L9
+MM_L10BF, SSL10, DSG10,                            //L10
+//L10BF,D10,D10,                                 &! old L10
+MM_L11BD, D2S  ,                                   //L11
+MM_L12BD, DPUE , PUE_L12, DHCL12, DVCL12, D2TX,      //L12
+MM_L13CF, DSS  , SXH_L13  , DSS   ,                    //L13
+MM_L14CF, DPUE , PUE_L14, D2LX  ,                    //L14
+MM_L15AD, D2H  , D2H  ,                            //L15
+MM_L16AD, D2L  ,                                   //L16
+MM_L17CF, DSQ  , QH_L17 , QS_L17  , DSQ   ,            //L17
+MM_L18CF, DPUE , PUE_L18, DHCL18, DVCL18, D2TX,      //L18
+MM_L19BD, D2S  ,                                   //L19
+//L20BD, D10  , D10)                               !L20
+MM_L20BD, SSL20, DSG10)                               ; //L20
+
+SUPERLnk:   LINE:= (                              
+MM_L01BF , D2S  ,                                   //L1
+MM_L02BF , DPUE , PUE_L02 , DHCL02, DVCL02, D2TX,      //L2
+MM_L03CD , DSQ  , QV_L03 , QP_L03  , DSQ   ,            //L3
+MM_L04CD , DPUE , PUE_L04 , D2LX  ,                    //L4
+MM_L05AF , D2H  , D2H  ,                            //L5
+MM_L06AF , D2L  ,                                   //L6
+MM_L07CD , DSS  , SXV_L07  , DSS   ,                    //L7
+MM_L08CD , DPUE , PUE_L08 , DHCL08, DVCL08, D2TX,      //L8
+MM_L09BF , D2S  ,                                   //L9
+//L10BF, SSL10, DSG10,                            &!L10
+MM_L10BF,D10,D10,                                 // old L10
+MM_L11BD, D2S  ,                                   //L11
+MM_L12BD, DPUE , PUE_L12, DHCL12, DVCL12, D2TX,      //L12
+MM_L13CF, DSS  , SXH_L13  , DSS   ,                    //L13
+MM_L14CF, DPUE , PUE_L14, D2LX  ,                    //L14
+MM_L15AD, D2H  , D2H  ,                            //L15
+MM_L16AD, D2L  ,                                   //L16
+MM_L17CF, DSQ  , QH_L17 , QS_L17  , DSQ   ,            //L17
+MM_L18CF, DPUE , PUE_L18, DHCL18, DVCL18, D2TX,      //L18
+MM_L19BD, D2S  ,                                   //L19
+MM_L20BD, D10  , D10)                               ; //L20
+
+SUPERLNM:   LINE:= (                              
+MM_L01BF , D2S  ,                                   //L1
+MM_L02BF , DPUE , PUE_L02 , DHCL02, DVCL02, D2TX,      //L2
+MM_L03CD , DSQ  , QV_L03 , QP_L03  , DSQ   ,            //L3
+MM_L04CD , DPUE , PUE_L04 , D2LX  ,                    //L4
+MM_L05AF , D2H  , D2H  ,                            //L5
+MM_L06AF , D2L  ,                                   //L6
+MM_L07CD , DSS  , SXV_L07  , DSS   ,                    //L7
+MM_L08CD , DPUE , PUE_L08 , DHCL08, DVCL08, D2TX,      //L8
+MM_L09BF , D2S  ,                                   //L9
+//L10BF, SSL10, DSG10,                            &!L10
+MM_L10BF,D10,D10,                                 // old L10
+MM_L11BD, D2S  ,                                   //L11
+MM_L12BD, DPUE , PUE_L12, DHCL12, DVCL12, D2TX,      //L12
+MM_L13CF, DSS  , SXH_L13  , DSS   ,                    //L13
+MM_L14CF, DPUE , PUE_L14, D2LX  ,                    //L14
+MM_L15AD, D2H  , D2H  ,                            //L15
+MM_L16AD, D2L  ,                                   //L16
+MM_L17CF, DSQ  , QH_L17 , QS_L17  , DSQ   ,            //L17
+MM_L18CF, DPUE , PUE_L18, DHCL18, DVCL18, D2TX,      //L18
+MM_L19BD, D2S  ,                                   //L19
+MM_L20BD, D10  )                               ; //L20
+
+//--------------------------------------------------------------------------
+// A simple AGS, no SEB equipment, FEB equipment, or injection equipement
+
+// AGS:   LINE:= (SUPERA, SUPERB, SUPERC, SUPERD, SUPERE, SUPERFnk, 
+//              SUPERG, SUPERH, SUPERI, SUPERJ, SUPERK, SUPERL);
+
+return;

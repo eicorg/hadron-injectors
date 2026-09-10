@@ -1,0 +1,48 @@
+// Mechanically extracted from source/madx/xags.lattice:1700-1745; do not change physics here.
+SUPERI:   LINE:= (                              
+MM_I01BF , D2S  ,                                   //I1
+MM_I02BF , DPUE , PUE_I02 , DHCI02, DVCI02, D2TX,      //I2
+MM_I03CD , DSQ  , QV_I03 , QP_I03  , DSQ   ,            //I3
+MM_I04CD , DPUE , PUE_I04 , D2LX  ,                    //I4
+MM_I05AF , D2H  , D2H  ,                            //I5
+MM_I06AF , D2L  ,                                   //I6
+MM_I07CD , DSS  , SXV_I07  , DSS,                       //I7
+MM_I08CD , DPUE , PUE_I08 , DHCI08, DVCI08, D2TX,      //I8
+MM_I09BF , D2S  ,                                   //I9
+MM_I10BF, SSI10, DSG10,                            //I10
+//I10BF,D10,D10,                                 &!I10 old I10
+MM_I11BD, D2S  ,                                   //I11
+MM_I12BD, DPUE , PUE_I12, DHCI12, DVCI12, D2TX,      //I12
+MM_I13CF, DSS  , SXH_I13  , DSS   ,                    //I13
+MM_I14CF, DPUE , PUE_I14, D2LX  ,                    //I14
+MM_I15AD, D2H  , D2H  ,                            //I15
+MM_I16AD, D2L  ,                                   //I16
+MM_I17CF, DSQ  , QH_I17 , QGTR1i , DSQ   ,            //I17
+MM_I18CF, DPUE , PUE_I18, DHCI18, DVCI18, D2TX,      //I18
+MM_I19BD, D2S  ,                                   //I19
+MM_I20BD, SSI20  , DSG10)                               ; //I20
+
+SUPERInk:   LINE:= (                              
+MM_I01BF , D2S  ,                                   //I1
+MM_I02BF , DPUE , PUE_I02 , DHCI02, DVCI02, D2TX,      //I2
+MM_I03CD , DSQ  , QV_I03 , QP_I03  , DSQ   ,            //I3
+MM_I04CD , DPUE , PUE_I04 , D2LX  ,                    //I4
+MM_I05AF , D2H_NuJ  ,QJump_I05, D2H_NuJ  ,                            //I5
+MM_I06AF , D2L  ,                                   //I6
+MM_I07CD , qshres_I07, DI07_1, SXV_I07  ,                       //I7
+MM_I08CD , DPUE , PUE_I08 , DHCI08, DVCI08, D2TX,      //I8
+MM_I09BF , D2S  ,                                   //I9
+//I10BF, SSI10, DSG10,                            &!I10
+MM_I10BF,D10,D10,                                 //I10 old I10
+MM_I11BD, D2S  ,                                   //I11
+MM_I12BD, DPUE , PUE_I12, DHCI12, DVCI12, D2TX,      //I12
+MM_I13CF, DSS  , SXH_I13  , DSS   ,                    //I13
+MM_I14CF, DPUE , PUE_I14, D2LX  ,                    //I14
+MM_I15AD, D2H  , D2H  ,                            //I15
+MM_I16AD, D2L  ,                                   //I16
+MM_I17CF, DSQ  , QH_I17 , QGTR1i , DSQ   ,            //I17
+MM_I18CF, DPUE , PUE_I18, DHCI18, DVCI18, D2TX,      //I18
+MM_I19BD, D2S  ,                                   //I19
+MM_I20BD, D10  , D10)                               ; //I20
+
+return;

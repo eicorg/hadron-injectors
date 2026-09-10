@@ -1,0 +1,81 @@
+// Mechanically extracted from source/madx/xags.lattice:1621-1699; do not change physics here.
+SUPERH:   LINE:= (                              
+MM_H01BF , D2S   ,                                  //H1
+MM_H02BF , DPUE  , PUE_H02, DHCH02, DVCH02, D2TX,      //H2
+MM_H03CD , DSQ   , QV_H03, QP_H03  , DSQ   ,            //H3
+MM_H04CD , DPUE  , PUE_H04, D2LX  ,                    //H4
+MM_H05AF , DSS   , SXDN_H05, DSS   ,                    //H5
+MM_H06AF , D2L   ,                                  //H6
+MM_H07CD , DSS   , SXV_H07 , DSS   ,                    //H7
+MM_H08CD , DPUE  , PUE_H08, DHCH08, DVCH08, D2TX,      //H8
+MM_H09BF , D2S   ,                                  //H9
+MM_H10BF, D10   , D10 ,                            //H10
+MM_H11BD, D2S   ,                                  //H11
+MM_H12BD, DPUE  , PUE_H12, DHCH12, DVCH12, D2TX,     //H12
+MM_H13CF, DSS   , SXH_H13  , DSS   ,                   //H13
+MM_H14CF, DPUE  , PUE_H14, D2LX  ,                   //H14
+MM_H15AD, D2H   , D2H  ,                           //H15
+MM_H16AD, D2L   ,                                  //H16
+MM_H17CF, DSQ   , QH_H17 , QS_H17  , DSQ   ,           //H17
+MM_H18CF, DPUE  , PUE_H18, DHCH18, DVCH18, D2TX,     //H18
+MM_H19BD, D2S   ,                                  //H19
+MM_H20BD, SSH20f, DSG10)                            ; //H20
+// old H20
+//H20BD,D10,D10)!H20
+
+SUPERHnk:   LINE:= (                              
+MM_H01BF , D2S   ,                                  //H1
+MM_H02BF , DPUE  , PUE_H02, DHCH02, DVCH02, D2TX,      //H2
+MM_H03CD , DSQ   , QV_H03, QP_H03  , DSQ   ,            //H3
+MM_H04CD , DPUE  , PUE_H04, D2LX  ,                    //H4
+MM_H05AF , qshres_H05, DH05_1, SXDN_H05 ,                    //H5
+MM_H06AF , D2LH  , H6MID, D2LH,                            //H6
+MM_H07CD , DSS   , H7MID, SXV_H07 , DSS   ,                    //H7
+MM_H08CD , DPUE  , H8MID, PUE_H08, DHCH08, DVCH08, D2TX,      //H8
+MM_H09BF , D2SH  , H9MID, D2SH,                            //H9
+MM_H10BF, D10   , H10MID, D10,                            //H10
+MM_H11BD, D2S   ,                                  //H11
+MM_H12BD, DPUE  , PUE_H12, DHCH12, DVCH12, D2TX,     //H12
+MM_H13CF, DSS   , SXH_H13  , DSS   ,                   //H13
+MM_H14CF, DPUE  , PUE_H14, D2LX  ,                   //H14
+MM_H15AD, D2H   , D2H  ,                           //H15
+MM_H16AD, D2L   ,                                  //H16
+MM_H17CF, DSQ   , QH_H17 , QS_H17  , DSQ   ,           //H17
+MM_H18CF, DPUE  , PUE_H18, DHCH18, DVCH18, D2TX,     //H18
+MM_H19BD, D2S   ,                                  //H19
+//H20BD, SSH20f, DSG10)                            !H20
+// old H20
+MM_H20BD,qshres_H20,DH20_1,DH20_2); //H20
+
+//------------------------------------------------------------
+// SUPERH broken up to include H20ES.  
+//   K.Brown (8/31/98)
+
+SUPERH1:   LINE:= (                             
+MM_H01BF , D2S  ,                                   //H1
+MM_H02BF , DPUE , PUE_H02 , DVCH02, D2TX,              //H2
+MM_H03CD , DSQ  , QV_H03 , QP_H03  , DSQ ,              //H3
+MM_H04CD , DPUE , PUE_H04 , D2LX  ,                    //H4
+MM_H05AF , DSS   , H5MID, SXDN_H05, DSS   ,                    //H5
+MM_H06AF , D2LH  , H6MID, D2LH,                            //H6
+MM_H07CD , DSS   , H7MID, SXV_H07 , DSS   ,                    //H7
+MM_H08CD , DPUE  , H8MID, PUE_H08, DHCH08, DVCH08, D2TX,      //H8
+MM_H09BF , D2SH  , H9MID, D2SH,                            //H9
+//H10BF, D10   , H10MID, D10,                            &!H10
+MM_H10BF, SSH10,                            //H10
+MM_H11BD, D2S  ,                                   //H11
+MM_H12BD, DPUE , PUE_H12, DVCH12, D2TX,              //H12
+MM_H13CF, DSS  , SXH_H13  , DSS   ,                    //H13
+MM_H14CF, DPUE , PUE_H14, D2LX  ,                    //H14
+MM_H15AD, D2H  , D2H  ,                            //H15
+MM_H16AD, D2L  ,                                   //H16
+MM_H17CF, DSQ  , QH_H17 , QS_H17  , DSQ ,              //H17
+MM_H18CF, DPUE , PUE_H18, DVCH18, D2TX,              //H18
+MM_H19BD, D2S  ,                                   //H19
+MM_H20BD, DSH20)                         ; //H19 to upstream face of H20 septum
+
+SUPERH2:   LINE:= (SSH20)	                 ; //H20
+
+//------------------------------------------------------------
+
+return;

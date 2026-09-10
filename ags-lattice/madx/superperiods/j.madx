@@ -1,0 +1,50 @@
+// Mechanically extracted from source/madx/xags.lattice:1746-1793; do not change physics here.
+SUPERJ:   LINE:= (                              
+MM_J01BF , D2S  ,                                   //J1
+MM_J02BF , DPUE , PUE_J02   , DHCJ02, DVCJ02, D2TX,    //J2
+MM_J03CD , DSQ  , QV_J03   , QP_J03  , DSQ   ,          //J3
+MM_J04CD , DPUE , PUE_J04   , D2LX  ,                  //J4
+MM_J05AF , D2H, D2H   ,                          //J5
+MM_J06AF , D2L  ,                                   //J6
+MM_J07CD , DSS  , SXV_J07    , DSS   ,                  //J7
+MM_J08CD , DPUE , PUE_J08   , DHCJ08, DVCJ08, D2TX,    //J8
+MM_J09BF , D2S  ,                                   //J9
+MM_J10BF, SSJ10  , J10DUMP, DSG10   ,                  //J10
+MM_J11BD, D2S  ,                                   //J11
+MM_J12BD, DPUE , PUE_J12  , DHCJ12, DVCJ12, D2TX,    //J12
+MM_J13CF, DSS  , SXH_J13    , DSS   ,                  //J13
+MM_J14CF, DPUE , PUE_J14  , D2LX  ,                  //J14
+MM_J15AD, D2H  , D2H    ,                          //J15
+MM_J16AD, D2L  ,                                   //J16
+MM_J17CF, DSQ  , QH_J17   , QS_J17  , DSQ   ,          //J17
+MM_J18CF, DPUE , PUE_J18  , DHCJ18, DVCJ18, D2TX,    //J18
+MM_J19BD, D2S  ,                                   //J19
+MM_J20BD, SSJ20, DSG10)                             ; //J20
+// old J20
+//J20BD,D10,D10)!J20
+
+SUPERJnk:   LINE:= (                              
+MM_J01BF , D2S  ,                                   //J1
+MM_J02BF , DPUE , PUE_J02   , DHCJ02, DVCJ02, D2TX,    //J2
+MM_J03CD , DSQ  , QV_J03   , QP_J03  , DSQ   ,          //J3
+MM_J04CD , DPUE , PUE_J04   , D2LX  ,                  //J4
+MM_J05AF , D2H_NuJ  ,QJump_J05, D2H_NuJ    ,                          //J5
+MM_J06AF , D2L  ,                                   //J6
+MM_J07CD , DSS  , SXV_J07    , DSS   ,                  //J7
+MM_J08CD , DPUE , PUE_J08   , DHCJ08, DVCJ08, D2TX,    //J8
+MM_J09BF , D2S  ,                                   //J9
+MM_J10BF, D10  , J10DUMP, D10   ,                  //J10
+MM_J11BD, D2S  ,                                   //J11
+MM_J12BD, DPUE , PUE_J12  , DHCJ12, DVCJ12, D2TX,    //J12
+MM_J13CF, DSS  , SXH_J13    , DSS   ,                  //J13
+MM_J14CF, DPUE , PUE_J14  , D2LX  ,                  //J14
+MM_J15AD, D2H  , D2H    ,                          //J15
+MM_J16AD, D2L  ,                                   //J16
+MM_J17CF, DSQ  , QH_J17   , QS_J17  , DSQ   ,          //J17
+MM_J18CF, DPUE , PUE_J18  , DHCJ18, DVCJ18, D2TX,    //J18
+MM_J19BD, D2S  ,                                   //J19
+//J20BD, SSJ20, DSG10)                             !J20
+// old J20
+MM_J20BD,D10,D10); //J20
+
+return;

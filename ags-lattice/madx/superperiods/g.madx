@@ -1,0 +1,75 @@
+// Mechanically extracted from source/madx/xags.lattice:1547-1620; do not change physics here.
+SUPERG:   LINE:= (                              
+MM_G01BF , D2S  ,                              //G1
+MM_G02BF , DPUE , G2MID, PUE_G02 , DHCG02, DVCG02, D2TX, //G2
+MM_G03CD , DSQ  , G3MID, QV_G03 , QP_G03  , DSQ   ,       //G3
+MM_G04CD , DPUE , G4MID, PUE_G04 , D2LX  ,               //G4
+MM_G05AF , D2H  , G5MID, D2H  ,                       //G5
+MM_G06AF , D2LH,  G6MID, D2LH ,                              //G6
+MM_G07CD , DSS  , G7MID, SXV_G07  , DSS   ,               //G7
+MM_G08CD , DPUE , PUE_G08 , DHCG08, DVCG08, D2TX, //G8
+MM_G09BF , D2S  ,                              //G9
+MM_G10BF, SSG10, DSG10,                       //G10
+//G10BF,D10,D10,&!old G10
+MM_G11BD, D2S  ,                              //G11
+MM_G12BD, DPUE , PUE_G12, DHCG12, DVCG12, D2TX, //G12
+MM_G13CF, DSS  , SXH_G13  , DSS   ,               //G13
+MM_G14CF, DPUE , PUE_G14, D2LX  ,               //G14
+MM_G15AD, D2H  , D2H  ,                       //G15
+MM_G16AD, D2L  ,                              //G16
+MM_G17CF, DSQ  , QH_G17 , QGTR2g , DSQ   ,       //G17
+MM_G18CF, DPUE , PUE_G18, DHCG18, DVCG18, D2TX, //G18
+MM_G19BD, D2S  ,                              //G19
+MM_G20BD, DSG20, SSG20)                          ; //G20
+//G20BD, SSG20  , DSG10)                          !G20
+
+SUPERGnk:   LINE:= (                            
+MM_G01BF , D2S  ,                              //G1
+MM_G02BF , DPUE , PUE_G02 , DHCG02, DVCG02, D2TX, //G2
+MM_G03CD , DSQ  , QV_G03 , QP_G03  , DSQ   ,       //G3
+MM_G04CD , DPUE , PUE_G04 , D2LX  ,               //G4
+MM_G05AF , D2H  , D2H  ,                       //G5
+MM_G06AF , D2L  ,                              //G6
+MM_G07CD , DSS  , SXV_G07  , DSS   ,               //G7
+MM_G08CD , DPUE , PUE_G08 , DHCG08, DVCG08, D2TX, //G8
+MM_G09BF , D2S  ,                              //G9
+MM_G10BF, SSG10,DSG10,                         //G10 w/kick
+//MM_G10BF, D10  , D10  ,                       &!G10
+MM_G11BD, D2S  ,                              //G11
+MM_G12BD, DPUE , PUE_G12, DHCG12, DVCG12, D2TX, //G12
+MM_G13CF, DSS  , SXH_G13  , DSS   ,               //G13
+MM_G14CF, DPUE , PUE_G14, D2LX  ,               //G14
+MM_G15AD, D2H  , D2H  ,                       //G15
+MM_G16AD, D2L  ,                              //G16
+MM_G17CF, DSQ  , QH_G17 , QGTR2g , DSQ   ,       //G17
+MM_G18CF, DPUE , PUE_G18, DHCG18, DVCG18, D2TX, //G18
+MM_G19BD, D2S  ,                              //G19
+MM_G20BD, DG20_1, qshres_G20, DG20_2, SSG20)                          ; //G20
+//G20BD, D10  , D10)                          !G20
+//G10Marker, SMG10)
+SSG10:   Line:= (DSG10, G10Marker, SMG10); // DSG10 + SMG10 + DSG10:= G10 straight section
+
+G10toH10: Line:=(
+G10Marker, SMG10,DSG10, //
+MM_G11BD, D2S  ,                              //G11
+MM_G12BD, DPUE , PUE_G12, DHCG12, DVCG12, D2TX, //G12
+MM_G13CF, DSS  , SXH_G13  , DSS   ,               //G13
+MM_G14CF, DPUE , PUE_G14, D2LX  ,               //G14
+MM_G15AD, D2H  , D2H  ,                       //G15
+MM_G16AD, D2L  ,                              //G16
+MM_G17CF, DSQ  , QH_G17 , QGTR2g , DSQ   ,       //G17
+MM_G18CF, DPUE , PUE_G18, DHCG18, DVCG18, D2TX, //G18
+MM_G19BD, D2S  ,                              //G19
+MM_G20BD, DSG20, SSG20,  //
+MM_H01BF , D2S   ,                                  //H1
+MM_H02BF , DPUE  , PUE_H02, DHCH02, DVCH02, D2TX,      //H2
+MM_H03CD , DSQ   , QV_H03, QP_H03  , DSQ   ,            //H3
+MM_H04CD , DPUE  , PUE_H04, D2LX  ,                    //H4
+MM_H05AF , DSS, SXDN_H05, DSS   ,                    //H5
+MM_H06AF , D2L   ,                                  //H6
+MM_H07CD , DSS   , SXV_H07 , DSS   ,                    //H7
+MM_H08CD , DPUE  , PUE_H08, DHCH08, DVCH08, D2TX,      //H8
+MM_H09BF , D2S   ,                                  //H9
+MM_H10BF,D10);
+
+return;

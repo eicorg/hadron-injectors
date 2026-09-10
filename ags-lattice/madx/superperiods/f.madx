@@ -1,0 +1,111 @@
+// Mechanically extracted from source/madx/xags.lattice:1438-1546; do not change physics here.
+SUPERF:   LINE:= (                           
+MM_F01BF , D2SX  , QThin_F01, D2SX,                                //F1
+MM_F02BF , DPUE , PUE_F02  , DHCF02, DVCF02, D2TX,  //F2
+MM_F03CD , DSQ  , QV_F03  , QP_F03  , DSQ   ,        //F3
+MM_F04CD , DPUE , PUE_F04  , D2LX  ,                //F4
+MM_F05AF , DSF05, SSF05,                         //F5
+//F5AF , D2H  , D2H   ,                        &!F5
+MM_F06AF , D2L  ,                                //F6
+MM_F07CD , DSS  , SXV_F07   , DSS   ,                //F7
+MM_F08CD , DPUE , PUE_F08  , DHCF08, DVCF08, D2TX,  //F8
+MM_F09BF , D2S  ,                                //F9
+MM_F10BF, SSF10, DSF10,                         //F10
+//F10BF, D10  , D10   ,                        &!F10
+MM_F11BD, D2S  ,                                //F11
+MM_F12BD, DPUE , PUE_F12 , DHCF12, DVCF12, D2TX,  //F12
+MM_F13CF, DSS  , SXH_F13, DSS   , //F13
+MM_F14CF, DPUE , PUE_F14 , D2LX  ,                //F14
+MM_F15AD, D2H  , D2H   ,                        //F15
+MM_F16AD, D2L  ,                                //F16
+MM_F17CF, DSQ  , QH_F17  , QS_F17  , DSQ   ,        //F17
+MM_F18CF, DPUE , PUE_F18 , DHCF18, DVCF18, D2TX,  //F18
+MM_F19BD, D2S  ,                                //F19
+MM_F20BD, SSF20, DSF20 , WB_PUE_F20)                ; //F20
+//F20BD, D10  , D10   , PUE_F20)               !old F20
+
+SUPERFnk:   LINE:= (                         
+MM_F01BF , D2SX  , QThin_F01,D2SX,                               //F1
+MM_F02BF , DPUE , PUE_F02  , DHCF02, DVCF02, D2TX,  //F2
+MM_F03CD , DSQ  , QV_F03  , QP_F03  , DSQ   ,        //F3
+MM_F04CD , DPUE , PUE_F04  , D2LX  ,                //F4
+MM_F05AF , D2H  , D2H   ,                        //F5
+MM_F06AF , D2L  ,                                //F6
+MM_F07CD , qshres_F07, DF07_1, SXV_F07  ,        //F7
+MM_F08CD , DPUE , PUE_F08  , DHCF08, DVCF08, D2TX,  //F8
+MM_F09BF , D2S  ,                                //F9
+MM_F10BF, D10  , D10   ,                        //F10
+MM_F11BD, D2S  ,                                //F11
+MM_F12BD, DPUE , PUE_F12 , DHCF12, DVCF12, D2TX,  //F12
+MM_F13CF, DSS  , SXH_F13, DSS   ,                //F13
+MM_F14CF, DPUE , PUE_F14 , D2LX  ,                //F14
+MM_F15AD, D2H  , D2H   ,                        //F15
+MM_F16AD, D2L  ,                                //F16
+MM_F17CF, DSQ  , QH_F17  , QS_F17  , DSQ   ,        //F17
+MM_F18CF, DPUE , PUE_F18 , DHCF18, DVCF18, D2TX,  //F18
+MM_F19BD, D2S  ,                                //F19
+//F20BD, SSF20, DSG10 , PUE_F20)                !F20
+MM_F20BD, DF20_1  ,qshres_F20, TUNEMETER_PUE, DF20_2  , WB_PUE_F20)               ; 
+
+//------------------------------------------------------------
+// SUPERF broken up with SEB equipement included
+
+SUPERF1:   LINE:= (                          
+MM_F01BF , D2S  ,                                //F1
+MM_F02BF , DPUE , PUE_F02  , DVCF02, D2TX  ,        //F2
+MM_F03CD , DSQ  , QV_F03  , QP_F03  , DSQ   ,        //F3
+MM_F04CD , DPUE , PUE_F04  , D2LX  ,                //F4
+MM_F05AF , DSF05) 			              ; // to us face of F5 septum magnet
+
+SUPERF2:   LINE:= (                          
+SSF05, MM_F06AF , D2L   ,                        //F6
+MM_F07CD , DSS  , SXV_F07   , DSS   ,                //F7
+MM_F08CD , DPUE , PUE_F08  , DVCF08, D2TX  ,        //F8
+MM_F09BF , D2S  ,                                //F9
+MM_F10BF, SSF10)                                 ; // to end of F10 septum magnet
+
+SUPERF3:   LINE:= (                          
+DSF10, MM_F11BD, D2S   ,                        //F11
+MM_F12BD, DPUE , PUE_F12 , DVCF12, D2TX  ,        //F12
+MM_F13CF, DSS  , SXH_F13, DSS   ,                //F13
+MM_F14CF, DPUE , PUE_F14 , D2LX  ,                //F14
+MM_F15AD, D2H  , D2H   ,                        //F15
+MM_F16AD, D2LH,  F16MID, D2LH,                                //F16
+MM_F17CF, DSQ  , F17MID, QH_F17  , QS_F17  , DSQ   ,        //F17
+MM_F18CF, DPUE , F18MID, PUE_F18 , DVCF18, D2TX  ,        //F18
+MM_F19BD, D2SH,  F19MID, D2SH,                               //F19
+MM_F20BD, SSF20, DSF20 , PUE_F20)                ; //F20
+//F20BD, D10  , F20MID, D10)                            !F20
+//F20BD, SSF20, DSG10 , PUE_F20)                !F20
+
+// Notes:  K. Brown (8/31/98)
+// a special F13 magnet for just f5 to f13 tracking, since the
+// beam is outside the magnet (gradient changes sign).
+//
+// It does a fair job predicting the orbit but nonlinearities are
+// such a mess that the field maps are the right thing to use.
+//
+//   normal CF type magnet.
+//CF: RBEND,L := LENC,ANGLE := ANGC,K1 := K1CF,K2 := K2CF!,Aperx=.07296,Apery=.04088
+//  modified to match trajectory seen in Beam
+//MF13CF: RBEND,L := LENC,ANGLE := ANGC,K1 := -K1CF,K2 := K2CF!,Aperx=.07296,Apery=.04088
+MF13CF: RBEND,L := LENC,ANGLE := ANGC,K1 := -0.2*K1CF,K2 := -1.0*K2CF;
+MF12BD: RBEND,L := LENB,ANGLE := ANGB,K1 := 1.7*K1BD,K2 := 5.0*K2BD;
+MF11BD: RBEND,L := LENB,ANGLE := ANGB,K1 := 1.0*K1BD,K2 := 1.0*K2BD;
+/*
+DRIFT, SW01, L := 1.02235;
+DRIFT, SW02, L := 1.02235;
+DRIFT, SW03, L := 1.02235;
+DRIFT, SW04, L := 1.02235;
+*/
+
+SectF5F13: LINE:= (SUPERF2, 
+DSF10,MMM_F11BD,D2S,//F11
+MMM_F12BD,DPUE,PUE_F12,DVCF12,D2TX,//F12
+MMM_F13CF,DSS, SXH_F13)            ; //F13
+//F13CF, DSS  , SXH_F13, DSS   , &!F13
+//MF13CF,DSS, SW01, SW02, SW03, SW04)	!F13 to CD1
+
+//------------------------------------------------------------
+
+return;

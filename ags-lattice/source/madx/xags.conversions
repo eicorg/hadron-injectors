@@ -1,0 +1,926 @@
+eoption, add=true;
+//
+// ags.conversions created 8/21/03  Kevin Brown
+//
+// This file contains the polynomial expansions and other 
+// expressions required for converting
+// from current to field quantities as required by mad.
+//
+// General Default MOM, to eliminate warning messages
+
+//RHO := 85.37835           ; //meters EJB 10/20/95
+CONV := 0.0254          ; // inches --> meters
+LQThin:= 0.35;
+
+//========================================================
+// Magnet lengths
+
+LENA := 94*CONV ; //length in meters
+LENB := 79*CONV;
+LENC := 94*CONV;
+LENQ := 0.39088; // 15.4- in.
+LENS := 0.655  ; //  25.8 in.
+
+//========================================================
+//   K1.. Is the quadrupole strength calculated as
+//        a function of momentum in Section 4.1
+//   K2.. Is the sextupole strength calculated as
+//        a function of momentum in Section 4.2
+//
+//   Tech Note 429
+//   Thern's data from 0.2 to 32.1 GeV/c
+//   For a DC machine 
+//   Bleser's fit
+//   Installed in program 3/1/96, set labelled K1AD4, etc
+//
+//!4.1 Main Magnet Quadrupole strength vs momentum
+//========================================================
+
+   K1AFM3 :=  0.0;
+   K1AFM2 := -9.9628200E-6;
+   K1AFM1 := -2.7124400E-4;
+   K1AF0 :=   0.0487709;
+   K1AF1 :=   4.2519700E-5;
+   K1AF2 :=  -1.5027310E-5 ;
+   K1AF3 :=   1.9900440E-6;
+   K1AF4 :=  -1.2474890E-7;
+   K1AF5 :=   3.7239700E-9;
+   K1AF6 :=  -4.3303320E-11;
+
+   K1ADM3 :=  0.0;
+   K1ADM2 :=  1.0494200E-5;
+   K1ADM1 :=  2.7764700E-4;
+   K1AD0 :=  -0.0487187;
+   K1AD1 :=  -4.4223160E-5;
+   K1AD2 :=   1.5432060E-5;
+   K1AD3 :=  -2.0235660E-6;
+   K1AD4 :=   1.2581210E-7;
+   K1AD5 :=  -3.7265440E-9;
+   K1AD6 :=   4.3053950E-11;
+
+   K1BFM3 :=  0.0;
+   K1BFM2 := -1.0370300E-5;
+   K1BFM1 := -2.7908700E-4;
+   K1BF0 :=   0.0485774;
+   K1BF1 :=   4.1807340E-5;
+   K1BF2 :=  -1.4546960E-5;
+   K1BF3 :=   1.9047810E-6;
+   K1BF4 :=  -1.1846940E-7;
+   K1BF5 :=   3.5161530E-9;
+   K1BF6 :=  -4.0853520E-11;
+
+   K1BDM3 :=  0.0;
+   K1BDM2 :=  1.0855000E-5;
+   K1BDM1 :=  2.8391800E-4;
+   K1BD0 :=  -0.048532;
+   K1BD1 :=  -4.3289400E-5;
+   K1BD2 :=   1.4902690E-5;
+   K1BD3 :=  -1.9351350E-6;
+   K1BD4 :=   1.1951780E-7;
+   K1BD5 :=  -3.5235550E-9;
+   K1BD6 :=   4.0708920E-11;
+
+   K1CFM3 :=  0.0;
+   K1CFM2 :=  1.9389200E-5;
+   K1CFM1 :=  3.7263000E-4;
+   K1CF0 :=   0.0485356;
+   K1CF1 :=   1.5650290E-5;
+   K1CF2 :=  -7.0134400E-6;
+   K1CF3 :=   1.1275010E-6;
+   K1CF4 :=  -8.2173200E-8;
+   K1CF5 :=   2.7713320E-9;
+   K1CF6 :=  -3.5625590E-11;
+
+   K1CDM3 :=  0.0;
+   K1CDM2 := -1.8159700E-5;
+   K1CDM1 := -3.6821400E-4;
+   K1CD0 :=  -0.0484683;
+   K1CD1 :=  -1.4804670E-5;
+   K1CD2 :=   6.8025790E-6;
+   K1CD3 :=  -1.1017970E-6;
+   K1CD4 :=   8.0248420E-8;
+   K1CD5 :=  -2.6963500E-9;
+   K1CD6 :=   3.4569950E-11;
+        p:= MOM;
+
+
+//       k1fcorr := 1.0024;
+//       k1dcorr := 1.0012;
+//       k1fcorr := 1.0007;
+//       k1dcorr := 1.0005;
+
+// FM 15 Mar 2013. Values as in Zgoubi model 
+// 5/17/2013 - kab = values to get madx tunes to match measured tunes
+//       k1fcorr := 1.0004;
+//       k1dcorr := 0.9996;
+k1fcorr := 1.000;
+k1dcorr := 1.0;
+
+
+  K1AD := k1dcorr*(K1ADM3/(p*p*p)+ K1ADM2/(p*p)+ K1ADM1/p + K1AD0+K1AD1*p 
+       +K1AD2*p*p+K1AD3*p*p*p+K1AD4*p*p*p*p+K1AD5*p*p*p*p*p  
+       +K1AD6*p*p*p*p*p*p)   ;
+  K1AF := k1fcorr*(K1AFM3/(p*p*p)+ K1AFM2/(p*p)+ K1AFM1/p + K1AF0+K1AF1*p 
+       +K1AF2*p*p+K1AF3*p*p*p+K1AF4*p*p*p*p+K1AF5*p*p*p*p*p 
+       +K1AF6*p*p*p*p*p*p );
+
+  K1BD :=k1dcorr*( K1BDM3/(p*p*p)+ K1BDM2/(p*p)+ K1BDM1/p + K1BD0+K1BD1*p 
+       +K1BD2*p*p+K1BD3*p*p*p+K1BD4*p*p*p*p+K1BD5*p*p*p*p*p 
+       +K1BD6*p*p*p*p*p*p );
+  K1BF := k1fcorr*(K1BFM3/(p*p*p)+ K1BFM2/(p*p)+ K1BFM1/p + K1BF0+K1BF1*p 
+       +K1BF2*p*p+K1BF3*p*p*p+K1BF4*p*p*p*p+K1BF5*p*p*p*p*p 
+       +K1BF6*p*p*p*p*p*p) ;
+
+  K1CD :=k1dcorr*( K1CDM3/(p*p*p)+ K1CDM2/(p*p)+ K1CDM1/p + K1CD0+K1CD1*p 
+       +K1CD2*p*p+K1CD3*p*p*p+K1CD4*p*p*p*p+K1CD5*p*p*p*p*p 
+       +K1CD6*p*p*p*p*p*p );
+  K1CF := k1fcorr*(K1CFM3/(p*p*p)+ K1CFM2/(p*p)+ K1CFM1/p + K1CF0+K1CF1*p 
+       +K1CF2*p*p+K1CF3*p*p*p+K1CF4*p*p*p*p+K1CF5*p*p*p*p*p 
+       +K1CF6*p*p*p*p*p*p) ;
+
+
+//!4.2 Main Magnet Sextupole strength vs momentum
+//===========================
+
+  K2ADM3 := -4.54103E-5;
+  K2ADM2 :=  3.86648E-4;
+  K2ADM1 :=  -5.15221E-3;
+  K2AD0  := -6.23676E-3;
+  K2AD1  :=  -8.21074E-5;
+  K2AD2  :=  2.94841E-5;
+  K2AD3  :=  -2.63597E-6  ;
+  K2AD4  :=  2.17817E-9;
+  K2AD5  :=  6.02362E-9;
+  K2AD6  := -1.60702E-10;
+
+  K2AFM3 :=  -2.11163E-5;
+  K2AFM2 :=  2.31252E-4;
+  K2AFM1 :=  -4.98909E-3;
+  K2AF0  :=  -6.35613E-3;
+  K2AF1  :=  -1.3545E-4;
+  K2AF2  :=  5.20196E-5;
+  K2AF3  :=  -5.93495E-6;
+  K2AF4  :=  2.12422E-7;
+  K2AF5  :=  6.36497E-11;
+  K2AF6  :=  -9.88187E-11;
+
+  K2BDM3 :=  -5.33308E-5  ;
+  K2BDM2 :=  4.61419E-4;
+  K2BDM1 :=  -5.36794E-3;
+  K2BD0  :=  -7.54801E-3;
+  K2BD1  :=  -8.46257E-5;
+  K2BD2  :=  3.25779E-5;
+  K2BD3  :=  -3.46201E-6;
+  K2BD4  :=  7.60854E-8;
+  K2BD5  :=  3.2396E-9;
+  K2BD6  :=  -1.24659E-10;
+
+  K2BFM3 :=  -3.35980E-5;
+  K2BFM2 :=  3.42004E-4;
+  K2BFM1 :=  -5.26172E-3;
+  K2BF0  :=  -7.65876E-3;
+  K2BF1  :=  -1.20210E-4;
+  K2BF2  :=  4.83680E-5;
+  K2BF3  :=  -5.85176E-6;
+  K2BF4  :=  2.31758E-7;
+  K2BF5  :=  -1.23709E-9;
+  K2BF6  :=  -7.77011E-11;
+
+  K2CDM3 :=  5.46173E-5;
+  K2CDM2 :=  -3.1184E-4;
+  K2CDM1 :=  4.53022E-3;
+  K2CD0  :=  -1.03323E-2;
+  K2CD1  :=  -5.10398E-4;
+  K2CD2  :=  1.74831E-4;
+  K2CD3  :=  -1.90748E-5;
+  K2CD4  :=  9.02456E-7;
+  K2CD5  :=  -1.75112E-8;
+  K2CD6  :=  7.24016E-11;
+
+  K2CFM3 :=  3.24138E-5;
+  K2CFM2 :=  -1.49126E-4;
+  K2CFM1 :=  4.2301E-3;
+  K2CF0  :=  -1.03626E-2;
+  K2CF1  :=  -4.55906E-4;
+  K2CF2  :=  1.55926E-4;
+  K2CF3  :=  -1.70233E-5;
+  K2CF4  :=  7.91965E-7;
+  K2CF5  :=  -1.44494E-8;
+  K2CF6  :=  3.8317E-11;
+
+//! Correction for B-dot effects is added in here.  K.Brown (8/31/98)
+  K2DBDCOEF := -0.0025;
+  K2FBDCOEF := -0.0025;
+
+  K2DBDCOEF := 0;
+  K2FBDCOEF := 0;
+
+
+  p := MOM;
+
+  // CCbit determines clockwise or counter +1 = clockwise.
+
+
+  K2AD := (K2ADM3/(p*p*p)+ K2ADM2/(p*p)+ K2ADM1/p + K2AD0+K2AD1*p 
+       +K2AD2*p*p+K2AD3*p*p*p+K2AD4*p*p*p*p+K2AD5*p*p*p*p*p  
+       +K2AD6*p*p*p*p*p*p - K2DBDCOEF*BDOT*LENA/LENA);
+
+  K2AF := (K2AFM3/(p*p*p)+ K2AFM2/(p*p)+ K2AFM1/p + K2AF0+K2AF1*p 
+       +K2AF2*p*p+K2AF3*p*p*p+K2AF4*p*p*p*p+K2AF5*p*p*p*p*p  
+       +K2AF6*p*p*p*p*p*p - K2FBDCOEF*BDOT*LENA/LENA);
+
+  K2BD := (K2BDM3/(p*p*p)+ K2BDM2/(p*p)+ K2BDM1/p + K2BD0+K2BD1*p 
+       +K2BD2*p*p+K2BD3*p*p*p+K2BD4*p*p*p*p+K2BD5*p*p*p*p*p  
+       +K2BD6*p*p*p*p*p*p - K2DBDCOEF*BDOT*LENB/LENA);
+
+  K2BF := (K2BFM3/(p*p*p)+ K2BFM2/(p*p)+ K2BFM1/p + K2BF0+K2BF1*p 
+       +K2BF2*p*p+K2BF3*p*p*p+K2BF4*p*p*p*p+K2BF5*p*p*p*p*p  
+       +K2BF6*p*p*p*p*p*p - K2FBDCOEF*BDOT*LENB/LENA);
+
+  K2CD := (K2CDM3/(p*p*p)+ K2CDM2/(p*p)+ K2CDM1/p + K2CD0+K2CD1*p 
+       +K2CD2*p*p+K2CD3*p*p*p+K2CD4*p*p*p*p+K2CD5*p*p*p*p*p  
+       +K2CD6*p*p*p*p*p*p - K2DBDCOEF*BDOT*LENC/LENA);
+
+  K2CF := (K2CFM3/(p*p*p)+ K2CFM2/(p*p)+ K2CFM1/p + K2CF0+K2CF1*p 
+       +K2CF2*p*p+K2CF3*p*p*p+K2CF4*p*p*p*p+K2CF5*p*p*p*p*p  
+       +K2CF6*p*p*p*p*p*p - K2FBDCOEF*BDOT*LENC/LENA);
+
+
+
+
+//! 6.0 Tune Quadrupoles
+//=================
+//XQH := XQH*1.00499-0.03276;
+//XQV := XQV*1.00359+0.13943;
+
+XQHP2 := XQH*XQH;
+XQHP3 := XQH*XQHP2;
+XQHP4 := XQH*XQHP3;
+XQHP5 := XQH*XQHP4;
+XQHP6 := XQH*XQHP5;
+
+XQVP2 := XQV*XQV;
+XQVP3 := XQV*XQVP2;
+XQVP4 := XQV*XQVP3;
+XQVP5 := XQV*XQVP4;
+XQVP6 := XQV*XQVP5;
+
+
+// The following are the polynomial coefficients for a tune quad
+//      transfer function with non-zero y-offset.
+nkqhc6 :=  -1.398198E-19 ;
+nkqhc5 :=   2.580390E-16 ;
+nkqhc4 :=  -1.111090E-13 ;
+nkqhc3 :=  -6.402958E-11 ;
+nkqhc2 :=   6.384814E-8  ;
+nkqhc1 :=   1.719269E-3  ;
+nkqhc0 :=   1.771798E-3  ;
+
+// The following are the polynomial coefficients for a tune quad
+//      transfer function with a zero y-offset
+ 
+kqhc6 := -3.641203e-18 ;
+kqhc5 :=  8.233111e-15 ;
+kqhc4 := -7.140673e-12 ;
+kqhc3 :=  2.941244e-9  ;
+kqhc2 := -5.725403e-7  ;
+kqhc1 :=  1.779240e-3  ;
+kqhc0 :=  0;
+
+B1QHOLD :=   nkqhc6 * XQHP6 
+	+ nkqhc5 * XQHP5 
+	+ nkqhc4 * XQHP4
+        + nkqhc3 * XQHP3 
+	+ nkqhc2 * XQHP2 
+	+ nkqhc1 * XQH 
+        + nkqhc0 ;
+
+B1QH :=   kqhc6 * XQHP6 
+	+ kqhc5 * XQHP5 
+	+ kqhc4 * XQHP4
+        + kqhc3 * XQHP3 
+	+ kqhc2 * XQHP2 
+	+ kqhc1 * XQH 
+        + kqhc0 ;
+
+B1QV :=   kqhc6  * XQVP6 // Ver. quads use same polynomial as hor.
+        + kqhc5  * XQVP5 
+        + kqhc4  * XQVP4
+        + kqhc3  * XQVP3 
+        + kqhc2  * XQVP2 
+        + kqhc1  * XQV 
+        + kqhc0 ;
+
+KQH := PQH*B1QH/(BRHO*LENQ);
+KQV := PQV*B1QV/(BRHO*LENQ);
+
+//==================================================================
+// We're going to have to use the polynomial coefficients over and over
+//   later in the file, so I'm going to define a set that we'll use 
+//   throughout the rest of the file.  If one wants to change which polynomial
+//   is used, one only has to change the values of q0-q6
+//==================================================================
+
+q6 := kqhc6;
+q5 := kqhc5;
+q4 := kqhc4;
+q3 := kqhc3;
+q2 := kqhc2;
+q1 := kqhc1;
+q0 := kqhc0;
+
+
+// ===================================================================
+// Many of the tune quads have multiple supplies wired to them.
+//   Here we combine the currents in each of the quads, determine
+//   the polarity bit and then apply the transfer functions.
+// ===================================================================
+eps := 1e-30;  // A tiny number to prevent division by zero when calc'ing polarity bits.
+
+// Horizontal tune quad currents (made positive for use in the transfer func. polynomials)
+XQH_A17 := ABS(XQH - a17_quad_I             );
+XQH_B17 := ABS(XQH              - XSB_FHLB17);
+XQH_C17 := ABS(XQH              + XSB_CEIK17);
+XQH_D17 := ABS(XQH                          );
+XQH_E17 := ABS(XQH - e17_quad_I + XSB_CEIK17);
+XQH_F17 := ABS(XQH              + XSB_FHLB17);
+XQH_G17 := ABS(XQH                          );
+XQH_H17 := ABS(XQH              + XSB_FHLB17);
+XQH_I17 := ABS(XQH              - XSB_CEIK17);
+XQH_J17 := ABS(XQH                          );
+XQH_K17 := ABS(XQH              - XSB_CEIK17);
+XQH_L17 := ABS(XQH              - XSB_FHLB17);             
+
+// Horizontal tune quad polarity bits = current/ABS(current)
+PQH_A17 :=    (XQH - a17_quad_I             ) / (XQH_A17+eps);
+PQH_B17 :=    (XQH              - XSB_FHLB17) / (XQH_B17+eps);
+PQH_C17 :=    (XQH              + XSB_CEIK17) / (XQH_C17+eps);
+PQH_D17 :=    (XQH                          ) / (XQH_D17+eps);
+PQH_E17 :=    (XQH - e17_quad_I + XSB_CEIK17) / (XQH_E17+eps);
+PQH_F17 :=    (XQH              + XSB_FHLB17) / (XQH_F17+eps);
+PQH_G17 :=    (XQH                          ) / (XQH_G17+eps);
+PQH_H17 :=    (XQH              + XSB_FHLB17) / (XQH_H17+eps);
+PQH_I17 :=    (XQH              - XSB_CEIK17) / (XQH_I17+eps);
+PQH_J17 :=    (XQH                          ) / (XQH_J17+eps);
+PQH_K17 :=    (XQH              - XSB_CEIK17) / (XQH_K17+eps);
+PQH_L17 :=    (XQH              - XSB_FHLB17) / (XQH_L17+eps);
+
+// Now make B strengths out of the currents using the transfer function (above)
+
+BQH_A17 :=   q6*XQH_A17^6 + q5*XQH_A17^5 + q4*XQH_A17^4 + q3*XQH_A17^3 
+           + q2*XQH_A17^2 + q1*XQH_A17^1 + q0*XQH_A17^0;
+
+BQH_B17 :=   q6*XQH_B17^6 + q5*XQH_B17^5 + q4*XQH_B17^4 + q3*XQH_B17^3 
+           + q2*XQH_B17^2 + q1*XQH_B17^1 + q0*XQH_B17^0;
+
+BQH_C17 :=   q6*XQH_C17^6 + q5*XQH_C17^5 + q4*XQH_C17^4 + q3*XQH_C17^3 
+           + q2*XQH_C17^2 + q1*XQH_C17^1 + q0*XQH_C17^0;
+
+BQH_D17 :=   q6*XQH_D17^6 + q5*XQH_D17^5 + q4*XQH_D17^4 + q3*XQH_D17^3 
+           + q2*XQH_D17^2 + q1*XQH_D17^1 + q0*XQH_D17^0;
+
+BQH_E17 :=   q6*XQH_E17^6 + q5*XQH_E17^5 + q4*XQH_E17^4 + q3*XQH_E17^3 
+           + q2*XQH_E17^2 + q1*XQH_E17^1 + q0*XQH_E17^0;
+
+BQH_F17 :=   q6*XQH_F17^6 + q5*XQH_F17^5 + q4*XQH_F17^4 + q3*XQH_F17^3 
+           + q2*XQH_F17^2 + q1*XQH_F17^1 + q0*XQH_F17^0;
+
+BQH_G17 :=   q6*XQH_G17^6 + q5*XQH_G17^5 + q4*XQH_G17^4 + q3*XQH_G17^3 
+           + q2*XQH_G17^2 + q1*XQH_G17^1 + q0*XQH_G17^0;
+
+BQH_H17 :=   q6*XQH_H17^6 + q5*XQH_H17^5 + q4*XQH_H17^4 + q3*XQH_H17^3 
+           + q2*XQH_H17^2 + q1*XQH_H17^1 + q0*XQH_H17^0;
+
+BQH_I17 :=   q6*XQH_I17^6 + q5*XQH_I17^5 + q4*XQH_I17^4 + q3*XQH_I17^3 
+           + q2*XQH_I17^2 + q1*XQH_I17^1 + q0*XQH_I17^0;
+
+BQH_J17 :=   q6*XQH_J17^6 + q5*XQH_J17^5 + q4*XQH_J17^4 + q3*XQH_J17^3 
+           + q2*XQH_J17^2 + q1*XQH_J17^1 + q0*XQH_J17^0;
+
+BQH_K17 :=   q6*XQH_K17^6 + q5*XQH_K17^5 + q4*XQH_K17^4 + q3*XQH_K17^3 
+           + q2*XQH_K17^2 + q1*XQH_K17^1 + q0*XQH_K17^0;
+
+BQH_L17 :=   q6*XQH_L17^6 + q5*XQH_L17^5 + q4*XQH_L17^4 + q3*XQH_L17^3 
+           + q2*XQH_L17^2 + q1*XQH_L17^1 + q0*XQH_L17^0;
+
+// And now calculate the K values from the BQH values....
+
+KQH_A17 :=  PQH_A17*BQH_A17/(BRHO*LENQ);
+KQH_B17 :=  PQH_B17*BQH_B17/(BRHO*LENQ);
+KQH_C17 :=  PQH_C17*BQH_C17/(BRHO*LENQ);
+KQH_D17 :=  PQH_D17*BQH_D17/(BRHO*LENQ);
+KQH_E17 :=  PQH_E17*BQH_E17/(BRHO*LENQ);
+KQH_F17 :=  PQH_F17*BQH_F17/(BRHO*LENQ);
+KQH_G17 :=  PQH_G17*BQH_G17/(BRHO*LENQ);
+KQH_H17 :=  PQH_H17*BQH_H17/(BRHO*LENQ);
+KQH_I17 :=  PQH_I17*BQH_I17/(BRHO*LENQ);
+KQH_J17 :=  PQH_J17*BQH_J17/(BRHO*LENQ);
+KQH_K17 :=  PQH_K17*BQH_K17/(BRHO*LENQ);
+KQH_L17 :=  PQH_L17*BQH_L17/(BRHO*LENQ);
+
+
+
+// Vertical tune quad currents (made positive for use in the transfer func. polynomials)
+XQV_A03 := ABS(XQV                          );
+XQV_B03 := ABS(XQV              - XSB_FHLB03);
+XQV_C03 := ABS(XQV              + XSB_CEIK03);
+XQV_D03 := ABS(XQV                          );
+XQV_E03 := ABS(XQV              + XSB_CEIK03);
+XQV_F03 := ABS(XQV              + XSB_FHLB03);
+XQV_G03 := ABS(XQV                          );
+XQV_H03 := ABS(XQV              + XSB_FHLB03);
+XQV_I03 := ABS(XQV              - XSB_CEIK03);
+XQV_J03 := ABS(XQV                          );
+XQV_K03 := ABS(XQV              - XSB_CEIK03);
+XQV_L03 := ABS(XQV              - XSB_FHLB03);   
+
+// Vertical tune quad polarity bits = current/ABS(current)
+PQV_A03 :=    (XQV                          ) / (XQV_A03+eps);
+PQV_B03 :=    (XQV              - XSB_FHLB03) / (XQV_B03+eps);
+PQV_C03 :=    (XQV              + XSB_CEIK03) / (XQV_C03+eps);
+PQV_D03 :=    (XQV                          ) / (XQV_D03+eps);
+PQV_E03 :=    (XQV              + XSB_CEIK03) / (XQV_E03+eps);
+PQV_F03 :=    (XQV              + XSB_FHLB03) / (XQV_F03+eps);
+PQV_G03 :=    (XQV                          ) / (XQV_G03+eps);
+PQV_H03 :=    (XQV              + XSB_FHLB03) / (XQV_H03+eps);
+PQV_I03 :=    (XQV              - XSB_CEIK03) / (XQV_I03+eps);
+PQV_J03 :=    (XQV                          ) / (XQV_J03+eps);
+PQV_K03 :=    (XQV              - XSB_CEIK03) / (XQV_K03+eps);
+PQV_L03 :=    (XQV              - XSB_FHLB03) / (XQV_L03+eps);   
+
+
+
+// Now make B strengths out of the currents using the transfer function (above)
+
+BQV_A03 :=   q6*XQV_A03^6 + q5*XQV_A03^5 + q4*XQV_A03^4 + q3*XQV_A03^3 
+           + q2*XQV_A03^2 + q1*XQV_A03^1 + q0*XQV_A03^0;
+
+BQV_B03 :=   q6*XQV_B03^6 + q5*XQV_B03^5 + q4*XQV_B03^4 + q3*XQV_B03^3 
+           + q2*XQV_B03^2 + q1*XQV_B03^1 + q0*XQV_B03^0;
+
+BQV_C03 :=   q6*XQV_C03^6 + q5*XQV_C03^5 + q4*XQV_C03^4 + q3*XQV_C03^3 
+           + q2*XQV_C03^2 + q1*XQV_C03^1 + q0*XQV_C03^0;
+
+BQV_D03 :=   q6*XQV_D03^6 + q5*XQV_D03^5 + q4*XQV_D03^4 + q3*XQV_D03^3 
+           + q2*XQV_D03^2 + q1*XQV_D03^1 + q0*XQV_D03^0;
+
+BQV_E03 :=   q6*XQV_E03^6 + q5*XQV_E03^5 + q4*XQV_E03^4 + q3*XQV_E03^3 
+           + q2*XQV_E03^2 + q1*XQV_E03^1 + q0*XQV_E03^0;
+
+BQV_F03 :=   q6*XQV_F03^6 + q5*XQV_F03^5 + q4*XQV_F03^4 + q3*XQV_F03^3 
+           + q2*XQV_F03^2 + q1*XQV_F03^1 + q0*XQV_F03^0;
+
+BQV_G03 :=   q6*XQV_G03^6 + q5*XQV_G03^5 + q4*XQV_G03^4 + q3*XQV_G03^3 
+           + q2*XQV_G03^2 + q1*XQV_G03^1 + q0*XQV_G03^0;
+
+BQV_H03 :=   q6*XQV_H03^6 + q5*XQV_H03^5 + q4*XQV_H03^4 + q3*XQV_H03^3 
+           + q2*XQV_H03^2 + q1*XQV_H03^1 + q0*XQV_H03^0;
+
+BQV_I03 :=   q6*XQV_I03^6 + q5*XQV_I03^5 + q4*XQV_I03^4 + q3*XQV_I03^3 
+           + q2*XQV_I03^2 + q1*XQV_I03^1 + q0*XQV_I03^0;
+
+BQV_J03 :=   q6*XQV_J03^6 + q5*XQV_J03^5 + q4*XQV_J03^4 + q3*XQV_J03^3 
+           + q2*XQV_J03^2 + q1*XQV_J03^1 + q0*XQV_J03^0;
+
+BQV_K03 :=   q6*XQV_K03^6 + q5*XQV_K03^5 + q4*XQV_K03^4 + q3*XQV_K03^3 
+           + q2*XQV_K03^2 + q1*XQV_K03^1 + q0*XQV_K03^0;
+
+BQV_L03 :=   q6*XQV_L03^6 + q5*XQV_L03^5 + q4*XQV_L03^4 + q3*XQV_L03^3 
+           + q2*XQV_L03^2 + q1*XQV_L03^1 + q0*XQV_L03^0;
+
+
+// Now calculate K values from the BQV
+
+
+KQV_A03 :=  PQV_A03*BQV_A03/(BRHO*LENQ);
+KQV_B03 :=  PQV_B03*BQV_B03/(BRHO*LENQ);
+KQV_C03 :=  PQV_C03*BQV_C03/(BRHO*LENQ);
+KQV_D03 :=  PQV_D03*BQV_D03/(BRHO*LENQ);
+KQV_E03 :=  PQV_E03*BQV_E03/(BRHO*LENQ);
+KQV_F03 :=  PQV_F03*BQV_F03/(BRHO*LENQ);
+KQV_G03 :=  PQV_G03*BQV_G03/(BRHO*LENQ);
+KQV_H03 :=  PQV_H03*BQV_H03/(BRHO*LENQ);
+KQV_I03 :=  PQV_I03*BQV_I03/(BRHO*LENQ);
+KQV_J03 :=  PQV_J03*BQV_J03/(BRHO*LENQ);
+KQV_K03 :=  PQV_K03*BQV_K03/(BRHO*LENQ);
+KQV_L03 :=  PQV_L03*BQV_L03/(BRHO*LENQ);
+
+
+//=====================================================================
+// POLARIZATION QUADS
+//  These were wired to the vertical tune quad string as of the FY07 run
+//   They are identical to the vertical tune quads except that they have
+//   half the number of windings (hence the factor of /2 in current below);
+//   This means that F03 and B03 each have two currents (snake compensation
+//   and vertical tune current).
+//=====================================================================
+
+IPOL_A03 := ABS(XQV             ) / 2;
+IPOL_B03 := ABS(XQV - b3_quad_I ) / 2; 
+IPOL_C03 := ABS(XQV             ) / 2;
+IPOL_D03 := ABS(XQV             ) / 2;
+IPOL_E03 := ABS(XQV             ) / 2;
+IPOL_F03 := ABS(XQV - f3_quad_I ) / 2;
+IPOL_G03 := ABS(XQV             ) / 2;
+IPOL_H03 := ABS(XQV             ) / 2;
+IPOL_I03 := ABS(XQV             ) / 2;
+IPOL_J03 := ABS(XQV             ) / 2;
+IPOL_K03 := ABS(XQV             ) / 2;
+IPOL_L03 := ABS(XQV             ) / 2;
+
+// Polarity bits (factor of two here also...):
+PPOL_A03 := (XQV             ) / (IPOL_A03+eps) /2;
+PPOL_B03 := (XQV - b3_quad_I ) / (IPOL_B03+eps) /2;
+PPOL_C03 := (XQV             ) / (IPOL_C03+eps) /2;
+PPOL_D03 := (XQV             ) / (IPOL_D03+eps) /2;
+PPOL_E03 := (XQV             ) / (IPOL_E03+eps) /2;
+PPOL_F03 := (XQV - f3_quad_I ) / (IPOL_F03+eps) /2;
+PPOL_G03 := (XQV             ) / (IPOL_G03+eps) /2;
+PPOL_H03 := (XQV             ) / (IPOL_H03+eps) /2;
+PPOL_I03 := (XQV             ) / (IPOL_I03+eps) /2;
+PPOL_J03 := (XQV             ) / (IPOL_J03+eps) /2;
+PPOL_K03 := (XQV             ) / (IPOL_K03+eps) /2;
+PPOL_L03 := (XQV             ) / (IPOL_L03+eps) /2;
+
+
+// Same transfer func as tune quads.
+
+BPOL_A03 :=   q6*IPOL_A03^6 + q5*IPOL_A03^5 + q4*IPOL_A03^4 + q3*IPOL_A03^3 
+            + q2*IPOL_A03^2 + q1*IPOL_A03^1 + q0*IPOL_A03^0;
+
+BPOL_B03 :=   q6*IPOL_B03^6 + q5*IPOL_B03^5 + q4*IPOL_B03^4 + q3*IPOL_B03^3 
+            + q2*IPOL_B03^2 + q1*IPOL_B03^1 + q0*IPOL_B03^0;
+
+BPOL_C03 :=   q6*IPOL_C03^6 + q5*IPOL_C03^5 + q4*IPOL_C03^4 + q3*IPOL_C03^3 
+            + q2*IPOL_C03^2 + q1*IPOL_C03^1 + q0*IPOL_C03^0;
+
+BPOL_D03 :=   q6*IPOL_D03^6 + q5*IPOL_D03^5 + q4*IPOL_D03^4 + q3*IPOL_D03^3 
+            + q2*IPOL_D03^2 + q1*IPOL_D03^1 + q0*IPOL_D03^0;
+
+BPOL_E03 :=   q6*IPOL_E03^6 + q5*IPOL_E03^5 + q4*IPOL_E03^4 + q3*IPOL_E03^3 
+            + q2*IPOL_E03^2 + q1*IPOL_E03^1 + q0*IPOL_E03^0;
+
+BPOL_F03 :=   q6*IPOL_F03^6 + q5*IPOL_F03^5 + q4*IPOL_F03^4 + q3*IPOL_F03^3 
+            + q2*IPOL_F03^2 + q1*IPOL_F03^1 + q0*IPOL_F03^0;
+
+BPOL_G03 :=   q6*IPOL_G03^6 + q5*IPOL_G03^5 + q4*IPOL_G03^4 + q3*IPOL_G03^3 
+            + q2*IPOL_G03^2 + q1*IPOL_G03^1 + q0*IPOL_G03^0;
+
+BPOL_H03 :=   q6*IPOL_H03^6 + q5*IPOL_H03^5 + q4*IPOL_H03^4 + q3*IPOL_H03^3 
+            + q2*IPOL_H03^2 + q1*IPOL_H03^1 + q0*IPOL_H03^0;
+
+BPOL_I03 :=   q6*IPOL_I03^6 + q5*IPOL_I03^5 + q4*IPOL_I03^4 + q3*IPOL_I03^3 
+            + q2*IPOL_I03^2 + q1*IPOL_I03^1 + q0*IPOL_I03^0;
+
+BPOL_J03 :=   q6*IPOL_J03^6 + q5*IPOL_J03^5 + q4*IPOL_J03^4 + q3*IPOL_J03^3 
+            + q2*IPOL_J03^2 + q1*IPOL_J03^1 + q0*IPOL_J03^0;
+
+BPOL_K03 :=   q6*IPOL_K03^6 + q5*IPOL_K03^5 + q4*IPOL_K03^4 + q3*IPOL_K03^3 
+            + q2*IPOL_K03^2 + q1*IPOL_K03^1 + q0*IPOL_K03^0;
+
+BPOL_L03 :=   q6*IPOL_L03^6 + q5*IPOL_L03^5 + q4*IPOL_L03^4 + q3*IPOL_L03^3 
+            + q2*IPOL_L03^2 + q1*IPOL_L03^1 + q0*IPOL_L03^0;
+
+
+//  Now get the K's from the B's
+
+KPOL_A03 :=  PPOL_A03*BPOL_A03/(BRHO*LENQ);
+KPOL_B03 :=  PPOL_B03*BPOL_B03/(BRHO*LENQ);
+KPOL_C03 :=  PPOL_C03*BPOL_C03/(BRHO*LENQ);
+KPOL_D03 :=  PPOL_D03*BPOL_D03/(BRHO*LENQ);
+KPOL_E03 :=  PPOL_E03*BPOL_E03/(BRHO*LENQ);
+KPOL_F03 :=  PPOL_F03*BPOL_F03/(BRHO*LENQ);
+KPOL_G03 :=  PPOL_G03*BPOL_G03/(BRHO*LENQ);
+KPOL_H03 :=  PPOL_H03*BPOL_H03/(BRHO*LENQ);
+KPOL_I03 :=  PPOL_I03*BPOL_I03/(BRHO*LENQ);
+KPOL_J03 :=  PPOL_J03*BPOL_J03/(BRHO*LENQ);
+KPOL_K03 :=  PPOL_K03*BPOL_K03/(BRHO*LENQ);
+KPOL_L03 :=  PPOL_L03*BPOL_L03/(BRHO*LENQ);
+
+//===============================================================
+// Horizontal tune jump quads
+//      Installed 5/13/08, used to jump horizontal polarization resonance tunes
+//===============================================================
+
+//KHNuJump_I05 := IHNuJump_I05*(7.245e-4)/(BRHO*LEN_HNuJump);
+//KHNuJump_J05 := IHNuJump_J05*(7.245e-4)/(BRHO*LEN_HNuJump);
+
+// 5/16/2013 - kab
+// Temporary parameterization for online model. We don't know how to get
+// the IHNuJump values from the system, so we fake it assuming 
+// B = 0.01315 kG at 10 cm radius for Brho = 1
+// in this case, IHNuJump_I05/J05 will be binary 0 or 1, based on the timing
+// function from the AGS Snapramps.
+// Of course, this assumes K1*L = constant for all energies.
+
+KHNuJump_I05 := IHNuJump_I05*(0.01315)*IHNuJump_I05;
+KHNuJump_J05 := IHNuJump_J05*(0.01315)*IHNuJump_J05;
+
+//===================================================================
+// Cold snake compensation quadrupoles.
+//
+// The A17 tune quad has a floating power supply wired up to add compensation
+//   for the cold snake. Have to calculate strength separate from other tune
+//     quads
+//
+// The B03 polarization quad is powered by two separate supplies.
+//      Since 09/06 the polarization quads have been wired in series with
+//      the vertical tune quads.  Since 09/05, B03 has had its own individual supply.
+// A19 and B01 thin quads have their own supplies and transfer functions 
+//==============================================================
+XA19 := a19_quad_I;
+
+a19c6 :=  1.917404e-15;
+a19c5 := -1.800937e-12;
+a19c4 :=  5.946546e-10;
+a19c3 := -8.898595e-8 ;
+a19c2 :=  5.948189e-6;
+a19c1 :=  2.984878e-3;
+a19c0 :=  1.025763e-3 *0;
+
+//a19c4 := -8.938974e-12;
+//a19c3 := -4.360751e-9 ;
+//a19c2 :=  1.787175e-6;
+//a19c1 :=  2.985794e-3;
+//a19c0 :=  2.195629e-3;
+
+
+
+
+KThin_A19_raw := 	a19c6*(XA19*XA19*XA19*XA19*XA19*XA19) 	+
+			a19c5*(XA19*XA19*XA19*XA19*XA19)	+
+			a19c4*(XA19*XA19*XA19*XA19)	 	+
+			a19c3*(XA19*XA19*XA19)	 		+
+			a19c2*(XA19*XA19)	 		+
+			a19c1*(XA19)	 			+
+			a19c0				 	;
+
+KThin_A19 := -1*KThin_A19_raw/(LQThin*BRHO);   // Defocusing.
+
+XB1 := b1_quad_I;
+
+b1c6 :=  1.917404e-15;
+b1c5 := -1.800937e-12;
+b1c4 :=  5.946546e-10;
+b1c3 := -8.898595e-8 ;
+b1c2 :=  5.948189e-6;
+b1c1 :=  2.984878e-3;
+b1c0 :=  1.025763e-3 *0;
+
+KThin_B01_raw := 	b1c6*(XB1*XB1*XB1*XB1*XB1*XB1) 	+
+			b1c5*(XB1*XB1*XB1*XB1*XB1)	+
+			b1c4*(XB1*XB1*XB1*XB1)	 	+
+			b1c3*(XB1*XB1*XB1)	 	+
+			b1c2*(XB1*XB1)	 		+
+			b1c1*(XB1)	 		+
+			b1c0				;
+
+KThin_B01 := -1*KThin_B01_raw/(LQThin*BRHO);   // Defocusing.
+
+//===============================================================
+// Warm snake compensation
+//===============================================================
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// NOTE:  E19 and F1 thin quads are wired in series but with 
+//  	     opposite polarities. E19 is focusing,F01 is defocusing.
+
+XE19 := e19_quad_I;
+
+
+e19c6 :=  1.917404e-15;
+e19c5 := -1.800937e-12;
+e19c4 :=  5.946546e-10;
+e19c3 := -8.898595e-8 ;
+e19c2 :=  5.948189e-6;
+e19c1 :=  2.984878e-3;
+e19c0 :=  1.025763e-3 *0;
+
+KThin_E19_raw := 	e19c6*(XE19*XE19*XE19*XE19*XE19*XE19) 	+
+		e19c5*(XE19*XE19*XE19*XE19*XE19)	+
+		e19c4*(XE19*XE19*XE19*XE19)	 	+
+		e19c3*(XE19*XE19*XE19)	 		+
+		e19c2*(XE19*XE19)	 		+
+		e19c1*(XE19)	 			+
+		e19c0				 	;
+
+KThin_E19 := 1* KThin_E19_raw / (LQThin*BRHO);
+
+
+
+XF1 := f1_quad_I;
+
+f1c6 :=  1.917404e-15;
+f1c5 := -1.800937e-12;
+f1c4 :=  5.946546e-10;
+f1c3 := -8.898595e-8 ;
+f1c2 :=  5.948189e-6;
+f1c1 :=  2.984878e-3;
+f1c0 :=  1.025763e-3 *0;
+
+KThin_F01_raw := 	f1c6*(XF1*XF1*XF1*XF1*XF1*XF1) 	+
+		f1c5*(XF1*XF1*XF1*XF1*XF1)	+
+		f1c4*(XF1*XF1*XF1*XF1)	 	+
+		f1c3*(XF1*XF1*XF1)	 	+
+		f1c2*(XF1*XF1)	 		+
+		f1c1*(XF1)	 		+
+		f1c0				;
+
+
+
+KThin_F01 := -1* KThin_F01_raw/ (LQThin*BRHO);
+KThin_F01 := -1* KThin_E19;
+
+
+//!7.0   Skew Quads
+//=============
+
+// Old skew quad definition (Cosmotron skew quads?)
+// XQS := 0.004431*XQS/BRHO;
+
+// New skew quad definition (identical transfer function to other tune quads)
+
+XQS_B17 := ABS(XQS);
+XQS_D17 := ABS(XQS);
+XQS_F17 := ABS(XQS);
+XQS_H17 := ABS(XQS);
+XQS_J17 := ABS(XQS);
+XQS_L17 := ABS(XQS);
+
+PQS_B17 := (XQS)/(XQS_B17 + eps);
+PQS_D17 := (XQS)/(XQS_D17 + eps);
+PQS_F17 := (XQS)/(XQS_F17 + eps);
+PQS_H17 := (XQS)/(XQS_H17 + eps);
+PQS_J17 := (XQS)/(XQS_J17 + eps);
+PQS_L17 := (XQS)/(XQS_L17 + eps);
+
+BQS_B17 :=   q6*XQS_B17^6 + q5*XQS_B17^5 + q4*XQS_B17^4 + q3*XQS_B17^3 
+           + q2*XQS_B17^2 + q1*XQS_B17^1 + q0*XQS_B17^0;
+
+BQS_D17 :=   q6*XQS_D17^6 + q5*XQS_D17^5 + q4*XQS_D17^4 + q3*XQS_D17^3 
+           + q2*XQS_D17^2 + q1*XQS_D17^1 + q0*XQS_D17^0;
+
+BQS_F17 :=   q6*XQS_F17^6 + q5*XQS_F17^5 + q4*XQS_F17^4 + q3*XQS_F17^3 
+           + q2*XQS_F17^2 + q1*XQS_F17^1 + q0*XQS_F17^0;
+
+BQS_H17 :=   q6*XQS_H17^6 + q5*XQS_H17^5 + q4*XQS_H17^4 + q3*XQS_H17^3 
+           + q2*XQS_H17^2 + q1*XQS_H17^1 + q0*XQS_H17^0;
+
+BQS_J17 :=   q6*XQS_J17^6 + q5*XQS_J17^5 + q4*XQS_J17^4 + q3*XQS_J17^3 
+           + q2*XQS_J17^2 + q1*XQS_J17^1 + q0*XQS_J17^0;
+
+BQS_L17 :=   q6*XQS_L17^6 + q5*XQS_L17^5 + q4*XQS_L17^4 + q3*XQS_L17^3 
+           + q2*XQS_L17^2 + q1*XQS_L17^1 + q0*XQS_L17^0;
+
+KQS_B17 := PQS_B17 * BQS_B17 / (BRHO * LENQ);
+KQS_D17 := PQS_D17 * BQS_D17 / (BRHO * LENQ);
+KQS_F17 := PQS_F17 * BQS_F17 / (BRHO * LENQ);
+KQS_H17 := PQS_H17 * BQS_H17 / (BRHO * LENQ);
+KQS_J17 := PQS_J17 * BQS_J17 / (BRHO * LENQ);
+KQS_L17 := PQS_L17 * BQS_L17 / (BRHO * LENQ);
+
+
+
+//!8.0 Gamma Transition Quads
+//===============
+XGQHP2 := XGQHP*XGQHP;
+XGQHP3 := XGQHP*XGQHP2;
+XGQHP4 := XGQHP*XGQHP3;
+XGQHP5 := XGQHP*XGQHP4;
+XGQHP6 := XGQHP*XGQHP5;
+//
+XGQHP2n := XGQHN*XGQHN;
+XGQHP3n := XGQHN*XGQHP2n;
+XGQHP4n := XGQHN*XGQHP3n;
+XGQHP5n := XGQHN*XGQHP4n;
+XGQHP6n := XGQHN*XGQHP5n;
+
+
+// The gamma quads used to use the same polynomial transfer function
+//  as the tune quads, but does not fit properly to the high currents
+//  of 1500 A or greater used in the gamma quads
+/*
+
+B1GQHPold :=kqhc6 * XGQHP6
+          + kqhc5 * XGQHP5
+          + kqhc4 * XGQHP4
+          + kqhc3 * XGQHP3
+          + kqhc2 * XGQHP2
+          + kqhc1 * XGQHP 
+          + kqhc0 ;
+
+B1GQHNold :=  kqhc6 * XGQHP6n
+         + kqhc5 * XGQHP5n 
+         + kqhc4 * XGQHP4n 
+         + kqhc3 * XGQHP3n
+         + kqhc2 * XGQHP2n
+         + kqhc1 * XGQHN 
+         + kqhc0;
+*/
+
+// New polynomial as of 3/5/07, calc'd by KAB
+
+kgqc6 := -1.7772e-21;
+kgqc5 :=  5.2639e-18;
+kgqc4 :=  1.8256e-16;
+kgqc3 := -1.6496e-11;
+kgqc2 :=  2.0786e-8;
+kgqc1 :=  8.5849e-4;
+kgqc0 :=  1.8530e-3 *0;
+
+
+B1GQHP :=   kgqc6 * XGQHP6
+          + kgqc5 * XGQHP5
+          + kgqc4 * XGQHP4
+          + kgqc3 * XGQHP3
+          + kgqc2 * XGQHP2
+          + kgqc1 * XGQHP 
+          + kgqc0 ;
+
+B1GQHN :=  kgqc6 * XGQHP6n
+         + kgqc5 * XGQHP5n 
+         + kgqc4 * XGQHP4n 
+         + kgqc3 * XGQHP3n
+         + kgqc2 * XGQHP2n
+         + kgqc1 * XGQHN 
+         + kgqc0;
+
+KGQHPa := -1 * B1GQHP/(2.0*BRHO*LENQ);
+KGQHPe := -1 * B1GQHP/(2.0*BRHO*LENQ);
+KGQHPi := -1 * B1GQHP/(2.0*BRHO*LENQ);
+KGQHNc := B1GQHN/(2.0*BRHO*LENQ);
+KGQHNg := B1GQHN/(2.0*BRHO*LENQ);
+KGQHNk := B1GQHN/(2.0*BRHO*LENQ);
+
+//!10.0 Chromaticity Sextupoles
+//======================
+
+PSH :=      XSH / (abs(xsh+eps));  //CCbit in xags.lattice description determines clockwise or counter, +1 = clockwise
+PSV :=  -1* XSV / (abs(xsv+eps));
+
+
+SXHC := PSH*2.*0.1016*XSH/BRHO ; //WRONGdEh=( 0.138*XSh - 0.071*XSv)/p
+SXVC := PSV*2.*0.1016*XSV/BRHO ; //WRONGdEv=(-0.064*XSh + 0.151*XSv)/p
+
+//!11.0   Drive Sextupoles
+
+SXDC := 2.*0.1016*XSD/BRHO;
+
+//!15.0 Extraction kicks 
+XOFF := 0.;
+H20kick := 0.;
+F05kick := 0.;
+F10kick := 0.;
+H10kick := 0.;
+//------------------------------------------------------------
+A5kick := 0.0;
+A10kick := 0.0;
+A20kick := 0.0;
+B10kick := 0.0;
+B20kick := 0.0;
+C10kick := 0.0;
+C20kick := 0.0;
+D10kick := 0.0;
+D20kick := 0.0;
+E10kick := 0.0;
+E20kick := 0.0;
+F20kick := 0.0;
+G10tkick := 0.0;
+G20tkick := 0.0;
+H20fkick := 0.0;
+I10kick := 0.0;
+I20kick := 0.0;
+J10kick := 0.0;
+J20kick := 0.0;
+K10kick := 0.0;
+K20kick := 0.0;
+L10kick := 0.0;
+L20kick := 0.0;
+
+F10Qk1 := 0.0;
+H10Qk1 := 0.0;
+
+
+/* =====================
+Pulsed Skew Quadrupoles for Spin Resonance Correction
+Phys. Rev. Accel. Beams 24, 031001 
+=================== */
+
+Qhres_cal := 1.167e-3;  //Measured integrated gradient per Amp of excitation.
+
+Khres_A10 := (1.0/BRHO)* (1.0/LQS_Hres) * Qhres_cal * Iqshres_A10;
+Khres_B07 := (1.0/BRHO)* (1.0/LQS_Hres) * Qhres_cal * Iqshres_B07;
+Khres_C07 := (1.0/BRHO)* (1.0/LQS_Hres) * Qhres_cal * Iqshres_C07;
+Khres_C20 := (1.0/BRHO)* (1.0/LQS_Hres) * Qhres_cal * Iqshres_C20;
+Khres_D07 := (1.0/BRHO)* (1.0/LQS_Hres) * Qhres_cal * Iqshres_D07;
+Khres_E05 := (1.0/BRHO)* (1.0/LQS_Hres) * Qhres_cal * Iqshres_E05;
+Khres_F07 := (1.0/BRHO)* (1.0/LQS_Hres) * Qhres_cal * Iqshres_F07;
+Khres_F20 := (1.0/BRHO)* (1.0/LQS_Hres) * Qhres_cal * Iqshres_F20;
+Khres_G20 := (1.0/BRHO)* (1.0/LQS_Hres) * Qhres_cal * Iqshres_G20;
+Khres_H05 := (1.0/BRHO)* (1.0/LQS_Hres) * Qhres_cal * Iqshres_H05;
+Khres_H20 := (1.0/BRHO)* (1.0/LQS_Hres) * Qhres_cal * Iqshres_H20;
+Khres_I07 := (1.0/BRHO)* (1.0/LQS_Hres) * Qhres_cal * Iqshres_I07;
+Khres_K05 := (1.0/BRHO)* (1.0/LQS_Hres) * Qhres_cal * Iqshres_K05;
+Khres_K07 := (1.0/BRHO)* (1.0/LQS_Hres) * Qhres_cal * Iqshres_K07;
+Khres_K15 := (1.0/BRHO)* (1.0/LQS_Hres) * Qhres_cal * Iqshres_K15;
+

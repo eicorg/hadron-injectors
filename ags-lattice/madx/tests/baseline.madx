@@ -1,0 +1,4 @@
+call, file = "ags.madx";
+use, period = ring;
+twiss, file = "/tmp/ags-madx-baseline.twiss";
+return;

@@ -1,0 +1,55 @@
+// Mechanically extracted from source/madx/xags.lattice:1260-1312; do not change physics here.
+SUPERC:   LINE:= (                           
+MM_C01BF , D2S  ,                                //C1
+MM_C02BF , DPUE , PUE_C02  , DHCC02, DVCC02, D2TX,  //C2
+MM_C03CD , DSQ  , QV_C03  , QP_C03  , DSQ   ,        //C3
+MM_C04CD , DPUE , PUE_C04  , D2LX  ,                //C4
+MM_C05AF , D2H  , C05IPM ,  D2H  ,                //C5
+MM_C06AF , D2L  ,                                //C6
+MM_C07CD , DSS  , SXV_C07   , DSS   ,                //C7
+MM_C08CD , DPUE , PUE_C08  , DHCC08, DVCC08, D2TX,  //C8
+MM_C09BF , D2S  ,                                //C9
+MM_C10BF, SSC10, DSG10 ,                        //C10
+//C10BF, D10  , D10   ,                       &!old C10
+MM_C11BD, D2S  ,                                //C11
+MM_C12BD, DPUE , PUE_C12 , DHCC12, DVCC12, D2TX,  //C12
+MM_C13CF, DSS  , SXH_C13   , DSS   ,                //C13
+MM_C14CF, DPUE , PUE_C14 , D2LX  ,                //C14
+MM_C15AD, D2H  , D2H   ,                        //C15
+MM_C16AD, D2L  ,                                //C16
+MM_C17CF, DSQ  , QH_C17  , QGTR2c , DSQ   ,        //C17
+MM_C18CF, DPUE , PUE_C18 , DHCC18, DVCC18, D2TX,  //C18
+MM_C19BD, D2S  ,                                //C19
+MM_C20BD, SSC20, DSG10)                          ; //C20 including kicker at C20
+// old section
+//C20BD,D10,D10)!C20
+
+ C15POL: MARKER;
+
+
+
+SUPERCnk:   LINE:= (                         
+MM_C01BF , D2S  ,                                //C1
+MM_C02BF , DPUE , PUE_C02  , DHCC02, DVCC02, D2TX,  //C2
+MM_C03CD , DSQ  , QV_C03  , QP_C03  , DSQ   ,        //C3
+MM_C04CD , DPUE , PUE_C04  , D2LX  ,                //C4
+MM_C05AF , D2H  ,C05IPM,  D2H   ,                        //C5
+MM_C06AF , D2L  ,                                //C6
+MM_C07CD , qshres_C07, DC07_1, SXV_C07   ,                //C7
+MM_C08CD , DPUE , PUE_C08  , DHCC08, DVCC08, D2TX,  //C8
+MM_C09BF , D2S  ,                                //C9
+//C10BF, SSC10, DSG10 ,                       &!C10
+MM_C10BF, D10  , D10   ,                        //old C10
+MM_C11BD, D2S  ,                                //C11
+MM_C12BD, DPUE , PUE_C12 , DHCC12, DVCC12, D2TX,  //C12
+MM_C13CF, DSS  , SXH_C13   , DSS   ,                //C13
+MM_C14CF, DPUE , PUE_C14 , D2LX  ,                //C14
+MM_C15AD, D2H , C15POL, D2H   ,                        //C15
+MM_C16AD, D2L  ,                                //C16
+MM_C17CF, DSQ  , QH_C17  , QGTR2c , DSQ   ,        //C17
+MM_C18CF, DPUE , PUE_C18 , DHCC18, DVCC18, D2TX,  //C18
+MM_C19BD, D2S  ,                                //C19
+//C20BD, SSC20, DSG10)                         !C20 including kicker at C20
+MM_C20BD, qshres_C20, DC20_1  , DC20_2); //C20
+
+return;

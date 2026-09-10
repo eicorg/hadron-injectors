@@ -1,0 +1,679 @@
+/*
+Bumps in this online model are tricky, since the quad and sextupole moments
+of the main magnets are treated as errors.  
+
+These error statements ADD to pre-existing errors.
+The error statements defining the intrinsic multipole components of the main magnets
+  REPLACE pre-existing errors with new ones.  Thus if one calls
+  xags.rbends_add_k1k2 to change the focusing in the mains, one 
+  must call this file again in order to re-implement the bumps represented
+  here.
+
+
+
+NOTES ON THE IMPLEMENTATION OF BACKLEG WINDINGS ON THE MAIN MAGNET.
+!-------------------------------------------------------------------------
+!Notes from 2/5/98 from calculations made by Nick Tsoupas and Kevin Brown.
+!
+! from beam and opera (AGS model and modelling of AGS magnets)
+! we have found the following:
+!
+! kick(A,C) = 5*Ibump*27.9650307*P(25.61)/(Imm * P(now))
+!    and
+! kick(B)   = 0.99156*kick(A,C)
+!    or
+! kick(B)   = 6*Ibump*23.5013009*P(25.61)/(Imm * P(now))
+!
+! From opera, we find that for P=25.61 GeV/c, that Imm = 71398 amp
+!
+!  In addition, there is a 0.5 % relative increase in Imm for P=4 GeV/c.
+!
+! For relative field errors, we must know what percentage change in bend angle
+! to impose, for a given Ibump.  DKN(0) is the relative change in bend
+! angle to make.  So if the bend angle is normally 27.965 mrad, and
+! the kick is 0.5875 mrad from the bumps, then DKN(0) should be
+! the ratio of the kick to the normal bend angle, or 0.0210.   
+!
+! So the expression to use for backlegs is:
+!         DBLR(A,C) = nturns*I_blw*25.61/(71398*P(now))
+!                   = 1.793468E-03 * I_blw/MOM
+!         DBLR(B)   = nturns*I_blw*25.61/(71398*P(now))
+!		    = 2.152161E-03 * I_blw/MOM
+!---------------------------------------------------------------------
+*/
+
+// General formula for backlegs: 
+//    Rel change in angle = 3.586936e-4 * nturns * I_blw/MOM
+
+blw_c := 3.586936e-4;  // coeff for general blw
+ 
+// Calibration constants for specific magnets:
+/*
+a16_c = 0.0005185627;	// meas. 1/19/06
+a17_c = 0.0005185627;	// meas. 1/19/06
+a18_c = 0.0005185627;	// meas. 1/19/06
+a19_c = 0.0005141915;	// meas. 1/19/06
+
+b02_c = 0.0004190811;	// meas. 1/19/06
+b03_c = 0.0004473412;	// meas. 1/19/06
+b04_c = 0.0004473412;	// meas. 1/19/06
+b05_c = 0.0004473412;	// meas. 1/19/06
+
+a20_c = 0.0004190811;	// meas. 1/19/06
+*/
+
+/*
+a16_c = 0.000431082/0.0008333327806;	// meas. 1/19/06
+a17_c = 0.000431082;	// meas. 1/19/06
+a18_c = 0.000431082;	// meas. 1/19/06
+a19_c = 0.000431082;	// meas. 1/19/06
+
+
+a16_c = 0.0005172987431;
+a17_c = 0.0005172987431;
+a18_c = 0.0005172987431;
+a19_c = 0.0005172987431;
+*/
+
+
+ /* My cal
+a16_c := 3.44895e-4; 
+a17_c := 3.44895e-4;
+a18_c := 3.44895e-4;
+a19_c := 3.44895e-4;
+
+
+b02_c = 2.49622e-4;	// meas. 1/19/06
+b03_c = 2.49622e-4;	// meas. 1/19/06
+b04_c = 2.49622e-4;	// meas. 1/19/06
+b05_c = 2.49622e-4;	// meas. 1/19/06
+
+a20_c =  2.17841e-4;	// meas. 1/19/06
+*/
+
+// NT cal
+a16_c := 3.44895e-4*1.54464; 
+a17_c := 3.44895e-4*1.54464;
+a18_c := 3.44895e-4*1.54464;
+a19_c := 3.44895e-4*1.54464;
+
+b02_c = 2.49622e-4*2.132506;	// meas. 1/19/06
+b03_c = 2.49622e-4*2.132506;	// meas. 1/19/06
+b04_c = 2.49622e-4*2.132506;	// meas. 1/19/06
+b05_c = 2.49622e-4*2.132506;	// meas. 1/19/06
+
+a20_c =  2.17841e-4*1.92383757;	// meas. 1/19/06
+
+
+//Test converting NT values from elog 09
+
+a16_c :=  3.62624e-4;
+a17_c :=  3.62624e-4;
+a18_c :=  3.62624e-4;
+a19_c :=  3.63115e-4;
+
+b02_c :=  3.63115e-4;
+b03_c :=  3.62624e-4;
+b04_c :=  3.62624e-4;
+b05_c :=  3.62624e-4;
+
+a20_c :=  3.63115e-4;
+
+/*
+a16_c :=  blw_c;
+a17_c :=   blw_c;
+a18_c :=   blw_c;
+a19_c :=   blw_c;
+
+b02_c :=   blw_c;
+b03_c :=   blw_c;
+b04_c :=   blw_c;
+b05_c :=   blw_c;
+
+a20_c :=   blw_c;
+*/
+
+value, MOM;
+
+value, a16_c;
+value, ANGA;
+eoption, add=true;
+
+
+
+L20dip=0;
+
+csnkDip = 0;
+
+//========================================================================
+// Cold Snake a16-19_blw bump.  Backlegs on A16, A17, -A18, -A19 in series.
+//========================================================================
+
+//a16-19_blw_I = cur in blw 16-19
+
+
+
+select, flag=error, clear=true;
+select, flag=error, range=MM_A16AD;
+  n = 10; 		// turns.
+  I = a16_19_blw_I; 	// current.
+  bmp = (a16_c)*n*I/(MOM*NN/Q) ;  // relative change.
+  dk1 = -k1ad*bmp;
+efcomp,order:=0, radius:= 1,  DKN := {ANGA*bmp*csnkDip, dk1*csnkK1};
+print, text="A16";
+value, bmp*ANGA;
+value, MOM;
+
+
+
+
+select, flag=error, clear=true;
+select, flag=error, range=MM_A17CF;
+  n = 10; 		// turns.
+  I = a16_19_blw_I; 	// current.
+  bmp = a17_c*n*I/(MOM*NN/Q);  // relative change.
+  dk1 = k1cf*bmp;
+efcomp, order:=0, radius:=1, DKN := {ANGC*bmp*csnkDip, dk1*csnkK1};
+
+select, flag=error, clear=true;
+select, flag=error, range=MM_A18CF;
+  n = 10; 			// turns.
+  I = -1* a16_19_blw_I; 	// current.
+  bmp = a18_c*n*I/(MOM*NN/Q);  	// relative change.
+  dk1 = k1cf*bmp;
+efcomp, order:=0, radius:=1, DKN := {ANGC*bmp*csnkDip, dk1*csnkK1};
+
+select, flag=error, clear=true;
+select, flag=error, range=MM_A19BD;
+  n = 12; 			// turns.
+  I = -1* a16_19_blw_I; 	// current.
+  bmp = a19_c*n*I/(MOM*NN/Q);  	// relative change.
+  dk1 = -k1bd*bmp;
+efcomp, order:=0, radius:=1, DKN := {ANGB*bmp*csnkDip, dk1*csnkK1};
+
+
+//------------------------------------------------------------------
+
+//====================================================================
+// Cold Snake b2-5_blw bump. Backlegs wired on  B2, B3, -B4, -B5 in series
+//====================================================================
+
+//b2-5_blw_I
+
+
+select, flag=error, clear=true;
+select, flag=error, range=MM_B02BF;
+  n := 12; 		// turns.
+  I := b2_5_blw_I; 	// current.
+  bmp = b02_c*n*I/(MOM*NN/Q);  // relative change.
+  dk1 = k1bf*bmp;
+efcomp, order:=0, radius:=1, DKN := {ANGB*bmp*csnkDip, dk1*csnkK1};
+print, text="B2";
+value, ANGB*bmp;
+
+
+select, flag=error, clear=true;
+select, flag=error, range=MM_B03CD;
+  n := 10; 		// turns.
+  I := b2_5_blw_I; 	// current.
+  bmp = b03_c*n*I/(MOM*NN/Q);  // relative change.
+  dk1 = -k1cd*bmp;
+efcomp, order:=0, radius:=1, DKN := {ANGC*bmp*csnkDip, dk1*csnkK1};
+
+select, flag=error, clear=true;
+select, flag=error, range=MM_B04CD;
+  n := 10; 			// turns.
+  I := -1*b2_5_blw_I; 	// current.
+  bmp = b04_c*n*I/(MOM*NN/Q);  	// relative change.
+  dk1 = -k1cd*bmp;
+efcomp, order:=0, radius:=1, DKN := {ANGC*bmp*csnkDip, dk1*csnkK1};
+
+select, flag=error, clear=true;
+select, flag=error, range=MM_B05AF;
+  n := 10; 			// turns.
+  I := -1* b2_5_blw_I; 	// current.
+  bmp := b05_c*n*I/(MOM*NN/Q);  	// relative change.
+  dk1 = k1af*bmp;
+efcomp, order:=0, radius:=1, DKN := {ANGA*bmp*csnkDip, dk1*csnkK1};
+
+
+//================================================================
+// Cold Snake A20 blw. Backleg wired only on A20, 12 turns.
+//	Note: There are three power supplies wired on A20, but the controls
+//	      system (currently) combines them into one total current which
+//	      we use here.
+//================================================================
+
+select, flag=error, clear=true;
+select, flag=error, range=MM_A20BD;
+  n := 12; 			// turns.
+  I := A20_BLW_I; 	// current.
+  bmp := a20_c*n*I/(MOM*NN/Q);  	// relative change.
+  dk1 = -k1bd*bmp;
+efcomp, order:=0, radius:=1, DKN := {ANGB*bmp*csnkDip, dk1*csnkK1};
+print, text="A20";
+value, ANGB*bmp;
+
+
+
+
+//====================================================================
+//  L20 Position Bump
+//   BLWs on K19, K20,  L13,  L14,  A7,  A8, B1, B2
+//   with      6,   6,   -5,   -5,  -5,  -5,  6,  6 turns respectively.
+//====================================================================
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_K19BD;
+  n = 6;
+  I = L20_BLW_P_I;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = -k1bd*bmp;
+efcomp, order=0, radius=1, DKN := {ANGB*bmp*L20Dip, dk1*L20K1};
+print, text="K19";
+value, ANGB*bmp;
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_K20BD;
+  n = 6;
+  I = L20_BLW_P_I;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = -k1bd*bmp;
+efcomp, order=0, radius=1, DKN := {ANGB*bmp*L20Dip, dk1*L20K1};
+
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_L13CF;
+  n = 5;
+  I = -L20_BLW_P_I;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = k1cf*bmp;
+efcomp, order=0, radius=1, DKN := {ANGC*bmp*L20Dip, dk1*L20K1};
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_L14CF;
+  n = 5;
+  I = -L20_BLW_P_I;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = k1cf*bmp;
+efcomp, order=0, radius=1, DKN := {ANGC*bmp*L20Dip, dk1*L20K1};
+
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_A07CD;
+  n = 5;
+  I = -L20_BLW_P_I;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = -k1cd*bmp;
+efcomp, order=0, radius=1, DKN := {ANGC*bmp*L20Dip, dk1*L20K1};
+
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_A08CD;
+  n = 5;
+  I = -L20_BLW_P_I;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = -k1cd*bmp;
+efcomp, order=0, radius=1, DKN := {ANGC*bmp*L20Dip, dk1*L20K1};
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_B01BF;
+  n = 6;
+  I = L20_BLW_P_I;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = k1bf*bmp;
+efcomp, order=0, radius=1, DKN := {ANGB*bmp*L20Dip, dk1*L20K1};
+
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_B02BF;
+  n = 6;
+  I = L20_BLW_P_I;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = k1bf*bmp;
+efcomp, order=0, radius=1, DKN := {ANGB*bmp*L20Dip, dk1*L20K1};
+
+
+
+//===============================================================
+// L20 Angle Bump (1 lambda)
+//  BLW windings around L6, L7, A14, A15
+//               with    5,  5,   -5,   -5 turns, respectively.
+
+//===============================================================
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_L06AF;
+  n = 5;
+  I = L20_BLW_A_I;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = k1af*bmp;
+efcomp, order=0, radius=1, DKN := {ANGa*bmp*L20Dip, dk1*L20K1};
+print, text="L06";
+value, ANGA*bmp;
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_L07CD;
+  n = 5;
+  I = L20_BLW_A_I;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = -k1cd*bmp;
+efcomp, order=0, radius=1, DKN := {ANGC*bmp*L20Dip, dk1*L20K1};
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_A14CF;
+  n = 5;
+  I = -L20_BLW_A_I*0;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = k1cf*bmp;
+efcomp, order=0, radius=1, DKN := {ANGC*bmp*L20Dip, dk1*L20K1};
+
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_A15AD;
+  n = 5;
+  I = -L20_BLW_A_I*0;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = -k1ad*bmp;
+efcomp, order=0, radius=1, DKN := {ANGa*bmp*L20Dip, dk1*L20K1};
+
+
+
+
+//================================================================
+// F10 BLW Bump
+//  Windings around E6, E7, E20, F1, F14, F15, G8, G9
+//           with    5,  5,  6,   6,   5,   5,  6,  6 turns, respectively.
+//================================================================
+
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_E06AF;
+  n = 5;
+  I = -F10_BLW_I;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = k1af*bmp;
+efcomp, order=0, radius=1, DKN := {ANGa*bmp, dk1};
+
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_E07CD;
+  n = 5;
+  I = -F10_BLW_I;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = -k1cd*bmp;
+efcomp, order=0, radius=1, DKN := {ANGC*bmp, dk1};
+
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_E20BD;
+  n = 6;
+  I = F10_BLW_I;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = -k1bd*bmp;
+efcomp, order=0, radius=1, DKN := {ANGB*bmp, dk1};
+
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_F01BF;
+  n = 6;
+  I = F10_BLW_I;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = k1bf*bmp;
+efcomp, order=0, radius=1, DKN := {ANGB*bmp, dk1};
+
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_F14CF;
+  n = 5;
+  I = F10_BLW_I;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = k1cf*bmp;
+efcomp, order=0, radius=1, DKN := {ANGC*bmp, dk1};
+
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_F15AD;
+  n = 5;
+  I = F10_BLW_I;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = -k1ad*bmp;
+efcomp, order=0, radius=1, DKN := {ANGA*bmp, dk1};
+
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_G08CD;
+  n = 5;
+  I = -F10_BLW_I;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = -k1cd*bmp;
+efcomp, order=0, radius=1, DKN := {ANGC*bmp, dk1};
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_G09BF;
+  n = 6;
+  I = -F10_BLW_I;
+  bmp = blw_c * n * I / (MOM*NN/Q);
+  dk1 = k1bf*bmp;
+efcomp, order=0, radius=1, DKN := {ANGB*bmp, dk1};
+
+
+
+
+//----------------------------------------------------------------
+
+//=============================
+// G09 Backleg winding bump
+//   Windings around F8  F9  -G2  -G3  -G16  -G17  
+
+//==================================
+
+f08_c := 3.586936E-04;
+f09_c := 3.586936E-04;
+g02_c := 3.586936E-04;
+g03_c := 3.586936E-04;
+g16_c := 3.586936E-04;
+g17_c := 3.586936E-04;
+
+
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_F08CD;
+  n = 5;
+  I =  G09_BLW_I;
+  bmp = f08_c * n * I / (MOM*NN/Q);
+  dk1 = -k1cd*bmp;
+efcomp, order=0, radius=1, DKN := {ANGC*bmp, dk1};
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_F09BF;
+  n = 6;
+  I =  G09_BLW_I;
+  bmp = f09_c * n * I / (MOM*NN/Q);
+  dk1 = k1bf*bmp;
+efcomp, order=0, radius=1, DKN = {ANGB*bmp, dk1};
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_G02BF;
+  n = 6;
+  I =  -G09_BLW_I;
+  bmp = g02_c * n * I / (MOM*NN/Q);
+  dk1 = k1bf*bmp;
+efcomp, order=0, radius=1, DKN := {ANGB*bmp, dk1};
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_G03CD;
+  n = 5;
+  I =  -G09_BLW_I;
+  bmp = g03_c * n * I / (MOM*NN/Q);
+  dk1 = -k1cd*bmp;
+efcomp, order=0, radius=1, DKN := {ANGC*bmp, dk1};
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_G16AD;
+  n = 10;
+  I =  -G09_BLW_I;
+  bmp = g16_c * n * I / (MOM*NN/Q);
+  dk1 = -k1ad*bmp;
+efcomp, order=0, radius=1, DKN := {ANGA*bmp, dk1};
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_G17CF;
+  n = 10;
+  I =  -G09_BLW_I;
+  bmp = g17_c * n * I / (MOM*NN/Q);
+  dk1 = k1cf*bmp;
+efcomp, order=0, radius=1, DKN := {ANGC*bmp, dk1};
+
+
+
+
+
+
+
+
+
+
+//==================================================
+//  H11 Backleg Winding bump
+//	Windings around -H04 -H05 -H18 -H19 I12 I13
+//==================================================
+
+
+h04_c :=  3.586936E-04;
+h05_c :=  3.586936E-04;
+h18_c :=  3.586936E-04;
+h19_c :=  3.586936E-04;
+i12_c :=  3.586936E-04;
+i13_c :=  3.586936E-04;
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_H04CD;
+  n = 10;
+  I = -H11_BLW_I;
+  bmp = h04_c * n * I / (MOM*NN/Q);
+  dk1 = -k1cd*bmp;
+efcomp, order=0, radius=1, DKN := {ANGC*bmp, dk1};
+
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_H05AF;
+  n = 10;
+  I = -H11_BLW_I;
+  bmp = h05_c * n * I / (MOM*NN/Q);
+  dk1 = k1af*bmp;
+efcomp, order=0, radius=1, DKN := {ANGA*bmp, dk1};
+
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_H18CF;
+  n = 5;
+  I = -H11_BLW_I;
+  bmp = h18_c * n * I / (MOM*NN/Q);
+  dk1 = k1cf*bmp;
+efcomp, order=0, radius=1, DKN := {ANGC*bmp, dk1};
+
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_H19BD;
+  n = 6;
+  I = -H11_BLW_I;
+  bmp = h19_c * n * I / (MOM*NN/Q);
+  dk1 = -k1bd*bmp;
+efcomp, order=0, radius=1, DKN := {ANGB*bmp, dk1};
+
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_I12BD;
+  n = 6;
+  I = H11_BLW_I;
+  bmp = i12_c * n * I / (MOM*NN/Q);
+  dk1 = -k1bd*bmp;
+efcomp, order=0, radius=1, DKN := {ANGB*bmp, dk1};
+
+select, flag=error, clear=true;
+select, flag=error, range = MM_I13CF;
+  n = 5;
+  I = H11_BLW_I;
+  bmp = i13_c * n * I / (MOM*NN/Q);
+  dk1 = k1cf*bmp;
+efcomp, order=0, radius=1, DKN := {ANGC*bmp, dk1};
+
+
+
+//============================================================
+// J10 Dump Bump
+//  BLWs on I10, I11, J04, J05, J18, J19, K12, K13
+//  with      6,   6,   5,   5,   5,   6,   6,   5
+//============================================================
+
+select, flag=error, clear=true;
+select, flag=error, range=MM_I10BF;
+  n =   6;
+  I =   -1*J10_BLW_I;
+  bmp = blw_c * n * I / (MOM);
+  dk1 = -1*k1bf * bmp ;
+efcomp, order=0, radius=1, DKN := {ANGB*bmp, dk1};
+
+select, flag=error, clear=true;
+select, flag=error, range=MM_I11BD;
+  n =   6;
+  I =   -1*J10_BLW_I;
+  bmp = blw_c * n * I / (MOM);
+  dk1 =  1*k1bd * bmp ;
+efcomp, order=0, radius=1, DKN := {ANGB*bmp, dk1};
+
+select, flag=error, clear=true;
+select, flag=error, range=MM_J04CD;
+  n =   5;
+  I =   J10_BLW_I;
+  bmp = blw_c * n * I / (MOM);
+  dk1 = -1*k1cd * bmp ;
+efcomp, order=0, radius=1, DKN := {ANGC*bmp, dk1};
+
+select, flag=error, clear=true;
+select, flag=error, range=MM_J05AF;
+  n =   5;
+  I =   J10_BLW_I;
+  bmp = blw_c * n * I / (MOM);
+  dk1 = 1*k1af * bmp ;
+efcomp, order=0, radius=1, DKN := {ANGA*bmp, dk1};
+
+select, flag=error, clear=true;
+select, flag=error, range=MM_J18CF;
+  n =   5;
+  I =   J10_BLW_I;
+  bmp = blw_c * n * I / (MOM);
+  dk1 = 1*k1cf * bmp ;
+efcomp, order=0, radius=1, DKN := {ANGC*bmp, dk1};
+
+select, flag=error, clear=true;
+select, flag=error, range=MM_J19BD;
+  n =   6;
+  I =   J10_BLW_I;
+  bmp = blw_c * n * I / (MOM);
+  dk1 = -1*k1bd * bmp;
+efcomp, order=0, radius=1, DKN := {ANGB*bmp, dk1};
+
+select, flag=error, clear=true;
+select, flag=error, range=MM_K12BD;
+  n =   6;
+  I =   -1*J10_BLW_I;
+  bmp = blw_c * n * I / (MOM);
+  dk1 = 1*k1bd * bmp ;
+efcomp, order=0, radius=1, DKN := {ANGB*bmp, dk1};
+
+select, flag=error, clear=true;
+select, flag=error, range=MM_K13CF;
+  n =   5;
+  I =   -1*J10_BLW_I;
+  bmp = blw_c * n * I / (MOM);
+  dk1 = -1*k1cf* bmp ;
+efcomp, order=0, radius=1, DKN := {ANGC*bmp, dk1};
+
+//print, "HERE";
+
+select, flag=error, clear=true;
+//print, "HERE";
+
+return;

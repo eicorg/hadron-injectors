@@ -1,0 +1,5 @@
+call, file = "booster.madx";
+select, flag = twiss, clear;
+select, flag = twiss, column = name, s, l, angle, betx, bety, dx, dpx, mux, muy;
+twiss, save, file = "/tmp/booster-clean-baseline.twiss", deltap = 0.;
+return;

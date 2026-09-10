@@ -1,0 +1,25 @@
+! AGS BMAD translation: active bare-ring topology.
+! Numeric strengths are materialized at the MAD-X baseline state.
+parameter[particle] = proton
+parameter[geometry] = closed
+beginning[p0c] = 2.160068369e9
+
+call, file = "elements/active_elements.bmad"
+call, file = "superperiods/a.bmad"
+call, file = "superperiods/b.bmad"
+call, file = "superperiods/c.bmad"
+call, file = "superperiods/d.bmad"
+call, file = "superperiods/e.bmad"
+call, file = "superperiods/f.bmad"
+call, file = "superperiods/g.bmad"
+call, file = "superperiods/h.bmad"
+call, file = "superperiods/i.bmad"
+call, file = "superperiods/j.bmad"
+call, file = "superperiods/k.bmad"
+call, file = "superperiods/l.bmad"
+
+mstart: marker
+mend: marker
+ring: line = (mstart, agsnk, mend)
+agsnk: line = (superank, superbnk, supercnk, superdnk, superenk, superfnk, supergnk, superhnk, superink, superjnk, superknk, superlnk)
+use, ring

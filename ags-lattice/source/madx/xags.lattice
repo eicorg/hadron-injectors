@@ -1,0 +1,2039 @@
+option, echo;
+//!   "ags.lattice"
+//
+//STANDARD AGS
+//         Initial, Standard  High-Field AGS, Auerbach
+//         April 6, 1994, Pue's added, Auerbach
+//         December 20-21, 1995, Developed as beam line, Bleser
+//         March 1, 1996, put in new gradiant formulas, K1AD4, etc, Sect. 4
+//         March 20, 1996, put in new gradiants for tune quads, Sect. 6
+//         Sept 18, 1996 complete installing vertical steerers, Sect. 13
+//	  March 3, 1997 install positive drive sextupoles in E5 and K5.
+//	  March 3, 1997 install negative drive sextupoles in B5 and H5.
+//	  March 3, 1997 install horizontal chromatic sextupoles in all
+//	                 SS13 ie add them in C, F, I, and L.
+//	  March 5, 1997 add apertures to main magnet definitions
+//	 		use COPY for MM names
+//	 march 19,197 temp remove sex B,D,F,H,J,L
+//        april 3, 1997 restore sex B,D,F,H,J,L
+//        May 22, 1998 Add horizontal steerers, Section 14
+//        May 22, 1998 prepare section 0.0 for studying Extraction Bumps for Soukas
+//        Save standard file as BACKUPAGS
+//
+//        SEB Modifications - Kevin Brown
+//        August 31, 1998 Added SEB Septa and new Lines
+//
+//        August 21, 2003 converted to cern mad8 format
+
+
+// August 9 05, changed nomenclature for most elements to be roughly of the form:
+//  (type)_(location), where type i ssomething like MM, QH, QS for main magnet,
+//   horizontal tune quad and skew quad respectivel and location is a main 
+//   magnet name (A3, L20, etc)
+
+// April 07, 2009: Adding a bit to 'flip' the AGS.  AGS main bends have heretofore
+//      bent positive beam to the right, which is clockwise, which is how the AGS beam
+//      looks if you lay on your back and look up.  For matching to BtA and AtR, it's better
+//      to have a counterclockwise bend (need to multiply dipoles and sextupole kicks by -1).
+//      No effect on most optics, flips the sign of the dispersion.
+//      I call the bit "CCbit".  Positive 1 will be clockwise, negative with be counterclockwise.
+//      I've chosen to put the bit in the element definition, NOT in the transfer functions. -- schoefer
+
+
+
+//
+//!0.0     INDEX
+//         0.  INDEX
+//        00.  Special test
+//         1.  INTRODUCTION
+//         2.  STANDARD SETTINGS
+//         3.
+//         4.  AGS MAIN MAGNETS
+//         5.  STRAIGHT SECTIONS
+//         6.  TUNE QUADRUPOLES
+//         7.  SKEW QUADRUPOLES
+//         8.  TRANSITION QUADRUPOLES
+//         9.  POLARISATION QUADRUPOLES
+//        10.  CHROMATICITY SEXTUPOLES
+//        11.  DRIVE SEXTUPOLES
+//        12.  PICK UP ELECTRODES
+//        13.  VERTICAL STEERING MAGNETS 
+//        14.  HORIZONTAL STEERING MAGNETS
+//	 15.  Extraction Kickers and elements
+LENA := 94*CONV ; //length in meters
+LENB := 79*CONV;
+LENC := 94*CONV;
+LENQ := 0.39088; // 15.4- in.
+LENS := 0.655  ; //  25.8 in.
+CONV := 0.0254          ; // inches --> meters
+LQThin:= 0.35;
+
+
+//==============
+//!1.1     Introduction
+// 1.2     This configuration sets up the AGS with a line for each magnet.
+//         It is intended to allow for inserting all the various AGS devices.
+//         It uses Auerbach's basic geometry and Tanaka's fit to the momentum.
+
+//!2.1   Standard settings
+//================
+//        In "FrunAGS" we set the parameters for the AGS devices.  In principle 
+//        the user never needs to set anything in "AGS.CONFIG" which is intended
+//        to cover all standard AGS running conditions.
+//!2.2 AGS Momentum
+//         In "FrunAGS" the momentum of the beam must be specified.
+//                                  MOM:= P(GeV/c)
+//         In Section 4 the main magnet propereties are calculated from the 
+//         Chosen momentum.
+//
+//!2.3 BDOT effect  :=  Added by K. Brown (8/31/98)
+//	  Another variable used for calculating the sextupole moments of the
+//	  main magnets is B-dot.  It is specified by,
+//				   BDOT := dB/dt (T/sec)
+//  	  For information on BDOT effects see AGS Tech. Note 288 (and 276)
+// initializations
+
+BDOT := 0.0     ; //initialize to zero
+/*
+XQH := 0.0     ; // Horizontal Quads current
+XQV := 0.0     ; // Vertical Quads current
+XQS := 0.0     ; // Skew Quads current
+XSH := 0.0     ; // Horizontal Sextupole current
+XSV := 0.0     ; // Vertical Sextupole current
+XSD := 0.0     ; // Drive Sextupole current
+*/
+
+//!5.0    Straight Sections
+//=================
+D2SL := 23.99664 *CONV ;
+D2TL := 23.99548 *CONV ;
+D2LL := 23.99428 *CONV ;
+D2HL := 29.99714 *CONV ;
+D5LL := 59.99428 *CONV ;
+D10L := 59.99367 *CONV ;
+d10ltot = 2.0*d10l;
+
+//
+D2S: DRIFT, L := 23.99664 *CONV ;
+D2T: DRIFT, L := 23.99548 *CONV ;
+D2L: DRIFT, L := 23.99428 *CONV ;
+D2H: DRIFT, L := 29.99714 *CONV ;
+D5L: DRIFT, L := 59.99428 *CONV ;
+D10: DRIFT, L := 59.99367 *CONV ;
+D10SKH: DRIFT, L:=(59.99367*CONV-1.5); //For snake insert
+
+D2H_NuJ: DRIFT, L := (29.99714 *CONV) - (0.8128)/2; // New drift length for the I5/J5 straight sections
+                                                    // , which now have horiz tune jump quads for p^.
+                                                    // Quad len = 0.8128;
+
+
+
+DSQm35 : DRIFT, L:= (D5LL/2) -LENQ-0.35;
+DSQm7   : DRIFT, L:= (D5LL/2) -LENQ-0.07;
+D7cm      : DRIFT, L:= 0.07;
+//
+//! Half Straigth Sections
+D2SH: DRIFT, L := (D2SL/2.);
+D2TH: DRIFT, L := (D2TL/2.);
+D2LH: DRIFT, L := (D2LL/2.);
+D2HH: DRIFT, L := (D2HL/2.);
+D5LH: DRIFT, L := (D5LL/2.);
+D10H: DRIFT, L := (D10L/2.);
+//
+//------------------------------------------------
+// Special Drifts For SEB - K.Brown (8/31/98)
+//
+// 4/12/99 Added drifts for G10 and E05 kickers
+//
+LES := 2.25     ; // length of H20 electrostatic septum
+LF05 := 0.66     ; // length of F5 magnetic septum
+LF10 := 2.03     ; // total length of F10 magnetic septum
+LG10 := 2.413    ; // total length of G10 kicker 
+LVB20 := 0.762    ; // total length of F20 and G20 vertical bumps
+
+DSG10: DRIFT, L := (D10L-LG10/2.);
+DSF05: DRIFT, L := (D2HL-LF05/2.);
+DSF10: DRIFT, L := (D10L-LF10/2.);
+DSH10: DRIFT, L := (D10L-LF10/2.);
+DSH20: DRIFT, L := (D10L-LES/2.);
+// parameter versions
+DSG10p := (D10L-LG10/2.);
+DSF05p := (D2HL-LF05/2.);
+DSF10p := (D10L-LF10/2.);
+DSH10p := (D10L-LF10/2.);
+DSH20p := (D10L-LES/2.);
+//
+DSF20U: DRIFT, L := (0.5207) ; // F20 is located 23.5" DS - iron to iron - from MM_F20BD face
+DSF20D: DRIFT, L := (D10L-0.5207-LVB20);
+DSF20:  DRIFT, L := (D10L);
+DSG20:  DRIFT, L := (D10L)    ; // G20 is located 15.5" US - iron to iron - from MM_H01BF face
+DSG20U: DRIFT, L := (D10L-LVB20-0.3175);
+DSG20D: DRIFT, L := (0.3175);
+
+D2SX: DRIFT, L:= (23.99664*CONV-LQThin)/2;
+
+
+//------------------------------------------------
+//
+
+//! 6.0 Tune Quadrupoles
+//=================
+//    The current in the tune quads is set by XQH and XQV in "FrunAGS"
+//    The horizontal tune quads are in each SS17.
+//    The vertical tune quads are in each SS03.
+//    Downstream of each tune quad is a polarisation, skew, or transition quad
+//    Install B1QH, B1QV  on 3/20/96, see Tech Note ??
+
+// defined in ags.conversions
+//LENQ := 0.39088       ! 15.4- in.
+
+//QHFH: QUADRUPOLE, L := LENQ, K1 := KQH
+//QHFV: QUADRUPOLE, L := LENQ, K1 := KQV
+
+/*
+QV_A03 : QUADRUPOLE, L := LENQ, K1 := KQV;
+QH_A17 : QUADRUPOLE, L := LENQ, K1 := KQH_A17; // Two power supplies (tune + cold snake compensation)
+
+QV_B03 : QUADRUPOLE, L := LENQ, K1 := KQV;
+QH_B17 : QUADRUPOLE, L := LENQ, K1 := KQH;
+
+QV_C03 : QUADRUPOLE, L := LENQ, K1 := KQV;
+QH_C17 : QUADRUPOLE, L := LENQ, K1 := KQH;
+
+QV_D03 : QUADRUPOLE, L := LENQ, K1 := KQV;
+QH_D17 : QUADRUPOLE, L := LENQ, K1 := KQH;
+
+QV_E03 : QUADRUPOLE, L := LENQ, K1 := KQV;
+QH_E17 : QUADRUPOLE, L := LENQ, K1 := KQH_E17; // Two power supplies (tune + cold snake compensation)
+
+QV_F03 : QUADRUPOLE, L := LENQ, K1 := KQV;
+QH_F17 : QUADRUPOLE, L := LENQ, K1 := KQH;
+
+QV_G03 : QUADRUPOLE, L := LENQ, K1 := KQV;
+QH_G17 : QUADRUPOLE, L := LENQ, K1 := KQH;
+
+QV_H03 : QUADRUPOLE, L := LENQ, K1 := KQV;
+QH_H17 : QUADRUPOLE, L := LENQ, K1 := KQH;
+
+QV_I03 : QUADRUPOLE, L := LENQ, K1 := KQV;
+QH_I17 : QUADRUPOLE, L := LENQ, K1 := KQH;
+
+QV_J03 : QUADRUPOLE, L := LENQ, K1 := KQV;
+QH_J17 : QUADRUPOLE, L := LENQ, K1 := KQH;
+
+QV_K03 : QUADRUPOLE, L := LENQ, K1 := KQV;
+QH_K17 : QUADRUPOLE, L := LENQ, K1 := KQH;
+
+QV_L03 : QUADRUPOLE, L := LENQ, K1 := KQV;
+QH_L17 : QUADRUPOLE, L := LENQ, K1 := KQH;
+*/
+
+QV_A03 : QUADRUPOLE, L := LENQ, K1 := KQV_A03;
+QH_A17 : QUADRUPOLE, L := LENQ, K1 := KQH_A17; // Two power supplies (tune + cold snake compensation)
+
+QV_B03 : QUADRUPOLE, L := LENQ, K1 := KQV_B03;
+QH_B17 : QUADRUPOLE, L := LENQ, K1 := KQH_B17;
+
+QV_C03 : QUADRUPOLE, L := LENQ, K1 := KQV_C03;
+QH_C17 : QUADRUPOLE, L := LENQ, K1 := KQH_C17;
+
+QV_D03 : QUADRUPOLE, L := LENQ, K1 := KQV_D03;
+QH_D17 : QUADRUPOLE, L := LENQ, K1 := KQH_D17;
+
+QV_E03 : QUADRUPOLE, L := LENQ, K1 := KQV_E03;
+QH_E17 : QUADRUPOLE, L := LENQ, K1 := KQH_E17; // Two power supplies (tune + cold snake compensation)
+
+QV_F03 : QUADRUPOLE, L := LENQ, K1 := KQV_F03;
+QH_F17 : QUADRUPOLE, L := LENQ, K1 := KQH_F17;
+
+QV_G03 : QUADRUPOLE, L := LENQ, K1 := KQV_G03;
+QH_G17 : QUADRUPOLE, L := LENQ, K1 := KQH_G17;
+
+QV_H03 : QUADRUPOLE, L := LENQ, K1 := KQV_H03;
+QH_H17 : QUADRUPOLE, L := LENQ, K1 := KQH_H17;
+
+QV_I03 : QUADRUPOLE, L := LENQ, K1 := KQV_I03;
+QH_I17 : QUADRUPOLE, L := LENQ, K1 := KQH_I17;
+
+QV_J03 : QUADRUPOLE, L := LENQ, K1 := KQV_J03;
+QH_J17 : QUADRUPOLE, L := LENQ, K1 := KQH_J17;
+
+QV_K03 : QUADRUPOLE, L := LENQ, K1 := KQV_K03;
+QH_K17 : QUADRUPOLE, L := LENQ, K1 := KQH_K17;
+
+QV_L03 : QUADRUPOLE, L := LENQ, K1 := KQV_L03;
+QH_L17 : QUADRUPOLE, L := LENQ, K1 := KQH_L17;
+
+
+
+
+//!7.0   Skew Quads
+//=============
+//         The current in the skew quads is set by XQS
+//         Here we define the skew values directly as a K1S (S:= skew) rather than a 'tilt'
+
+QS_B17: QUADRUPOLE, L := LENQ, K1S := KQS_B17;
+QS_D17: QUADRUPOLE, L := LENQ, K1S := KQS_D17;
+QS_F17: QUADRUPOLE, L := LENQ, K1S := KQS_F17;
+QS_H17: QUADRUPOLE, L := LENQ, K1S := KQS_H17;
+QS_J17: QUADRUPOLE, L := LENQ, K1S := KQS_J17;
+QS_L17: QUADRUPOLE, L := LENQ, K1S := KQS_L17;
+
+
+
+
+//    The skew quads are in SS17 in superperiods B,D,F,H,J,L
+//    The length of the straight section is given by D5L
+//    We place the quads centered in the SS with no gap between them
+//    Then:
+
+DSQ: DRIFT, L := D5LL/2 - LENQ;
+
+//    The insertion becomes
+//    DSQ,QH*17,QHFS,DSQ, where * is the relevant superperiod
+
+//!8.0 Transition Quads
+//===============
+//       KGTR in "FrunAGS" sets the gradient of the transition quads
+
+QGTR1A: QUADRUPOLE, L := LENQ, K1 := KGQHPa;
+QGTR1E: QUADRUPOLE, L := LENQ, K1 := KGQHPe;
+QGTR1I: QUADRUPOLE, L := LENQ, K1 := KGQHPi;
+QGTR2C: QUADRUPOLE, L := LENQ, K1 := KGQHNc;
+QGTR2G: QUADRUPOLE, L := LENQ, K1 := KGQHNg;
+QGTR2K: QUADRUPOLE, L := LENQ, K1 := KGQHNk;
+
+//    The positive transition quads are in SS17 in superperiods A, E, and I
+//    The negative transition quads are in SS17 in superperiods C, G, and K
+//    The length of the straight section is given by D5L
+//    We place the quads centered in the SS with no gap between them
+//    For the positive quads the insertion in A, E, and I is:
+//    DSQ,QH*17,QGTR1,DSQ, where * is the relevant superperiod
+//    For the negative quads the insertion in C, G, and K is:
+//    DSQ,QH*17,QGTR2,DSQ, where * is the relevant superperiod.
+
+//!9.0   Polarisation Quads
+//==================
+//       KPOL in "FrunAGS" sets the gradient of the polarisation quads
+
+QPOL: QUADRUPOLE, L := LENQ, K1 := KPOL;
+
+/*
+QP_A03: QUADRUPOLE, L := LENQ, K1 := KPOL;
+QP_B03: QUADRUPOLE, L := LENQ, K1 := KPOL_B03;
+QP_C03: QUADRUPOLE, L := LENQ, K1 := KPOL;
+QP_D03: QUADRUPOLE, L := LENQ, K1 := KPOL;
+QP_E03: QUADRUPOLE, L := LENQ, K1 := KPOL;
+QP_F03: QUADRUPOLE, L := LENQ, K1 := KPOL_F03;
+QP_G03: QUADRUPOLE, L := LENQ, K1 := KPOL;
+QP_H03: QUADRUPOLE, L := LENQ, K1 := KPOL;
+QP_I03: QUADRUPOLE, L := LENQ, K1 := KPOL;
+QP_J03: QUADRUPOLE, L := LENQ, K1 := KPOL;
+QP_K03: QUADRUPOLE, L := LENQ, K1 := KPOL;
+QP_L03: QUADRUPOLE, L := LENQ, K1 := KPOL;
+*/
+
+
+QP_A03: QUADRUPOLE, L := LENQ, K1 := KPOL_A03;
+QP_B03: QUADRUPOLE, L := LENQ, K1 := KPOL_B03;
+QP_C03: QUADRUPOLE, L := LENQ, K1 := KPOL_C03;
+QP_D03: QUADRUPOLE, L := LENQ, K1 := KPOL_D03;
+QP_E03: QUADRUPOLE, L := LENQ, K1 := KPOL_E03;
+QP_F03: QUADRUPOLE, L := LENQ, K1 := KPOL_F03;
+QP_G03: QUADRUPOLE, L := LENQ, K1 := KPOL_G03;
+QP_H03: QUADRUPOLE, L := LENQ, K1 := KPOL_H03;
+QP_I03: QUADRUPOLE, L := LENQ, K1 := KPOL_I03;
+QP_J03: QUADRUPOLE, L := LENQ, K1 := KPOL_J03;
+QP_K03: QUADRUPOLE, L := LENQ, K1 := KPOL_K03;
+QP_L03: QUADRUPOLE, L := LENQ, K1 := KPOL_L03;
+
+//    The polarisation quads are in all SS03
+//    The insertion is:
+//    DSQ,QV*3,QPOL,DSQ, where * is the relevant superperiod.
+
+
+//===============================================================
+// Horizontal tune jump quads (for p^ horizontal resonance jumps) 5/13/09 vhs
+//  shortened names from QHNuJump_x05 to QJump_x05 to satisfy SPRINT code 2/5/2018
+//===============================================================
+
+LEN_HNuJump := 0.8128;
+
+QJump_I05 : Quadrupole, L := LEN_HNuJump, K1 := KHNuJump_I05;
+QJump_J05 : Quadrupole, L := LEN_HNuJump, K1 := KHNuJump_J05;
+
+//===================================================================
+// Cold and warm snakes defined as drifts by default.
+//===================================================================
+// CSNK: sextupole, L:=3.0, k2:=0.0001;                   //Placeholder for Cold snake.
+csnk_mark : marker;
+CSNK1: MARKER;
+CSNK2: sextupole, L:=3.0, k2:=1e-10;
+
+//csnk2: drift, l=3;
+CSNK3: MARKER;
+
+csnk: line:= (csnk1, csnk2, csnk3);
+
+//WSNK: sextupole, L:=3.0, k2:=0;                   // Placeholder for Warm snake.
+//WSNK: drift, l=3;
+WSNK: sextupole, L:=3.0, k2:=1e-10;
+
+
+
+//==================================================================
+// Thin 'Courant' quadrupoles for cold snake compensation
+//==================================================================
+
+LQThin:= 0.35;	// Length of thin quads
+
+QThin_A19: quadrupole, L:= LQThin  , k1 := KThin_A19;
+QThin_B01: quadrupole, L:= LQThin  , k1 := Kthin_B01;
+
+
+//==================================================================
+// Thin quadrupoles for warm snake compensation
+//==================================================================
+
+// Same as thin quads for cold snake
+
+QThin_E19: quadrupole, L:= LQThin  , k1 := KThin_E19;
+QThin_F01: quadrupole, L:= LQThin  , k1 := Kthin_F01;
+
+
+//!10.0 Chromaticity Sextupoles
+//======================
+//     XSH and XSV in "FrunAGS" set the currents in the chromaticity sextupoles
+
+// defined in ags.conversions
+//LENS := 0.655        !  25.8 in.
+
+SXH  : SEXTUPOLE,  L := LENS, K2 := SXHC * CCbit;
+SXV  : SEXTUPOLE,  L := LENS, K2 := SXVC * CCbit;
+
+SXHU  : SEXTUPOLE,  L := LENS/2, K2 := SXHC * CCbit;
+SXHD  : SEXTUPOLE,  L := LENS/2, K2 := SXHC * CCbit;
+
+//    The vertical sextupoles are in all the SS07
+//    The horizontal sextupoles are all in the 13 position.
+
+
+SXH_A13: SEXTUPOLE, L := LENS, K2 := SXHC * CCbit;
+SXH_B13: SEXTUPOLE, L := LENS, K2 := SXHC * CCbit;
+SXH_C13: SEXTUPOLE, L := LENS, K2 := SXHC * CCbit;
+SXH_D13: SEXTUPOLE, L := LENS, K2 := SXHC * CCbit;
+SXH_E13: SEXTUPOLE, L := LENS, K2 := SXHC * CCbit;
+SXH_F13: SEXTUPOLE, L := LENS, K2 := SXHC * CCbit;
+SXH_G13: SEXTUPOLE, L := LENS, K2 := SXHC * CCbit;
+SXH_H13: SEXTUPOLE, L := LENS, K2 := SXHC * CCbit;
+SXH_I13: SEXTUPOLE, L := LENS, K2 := SXHC * CCbit;
+SXH_J13: SEXTUPOLE, L := LENS, K2 := SXHC * CCbit;
+SXH_K13: SEXTUPOLE, L := LENS, K2 := SXHC * CCbit;
+SXH_L13: SEXTUPOLE, L := LENS, K2 := SXHC * CCbit;
+
+SXV_A07: SEXTUPOLE, L := LENS, K2 := SXVC * CCbit;
+SXV_B07: SEXTUPOLE, L := LENS, K2 := SXVC * CCbit;
+SXV_C07: SEXTUPOLE, L := LENS, K2 := SXVC * CCbit;
+SXV_D07: SEXTUPOLE, L := LENS, K2 := SXVC * CCbit;
+SXV_E07: SEXTUPOLE, L := LENS, K2 := SXVC * CCbit;
+SXV_F07: SEXTUPOLE, L := LENS, K2 := SXVC * CCbit;
+SXV_G07: SEXTUPOLE, L := LENS, K2 := SXVC * CCbit;
+SXV_H07: SEXTUPOLE, L := LENS, K2 := SXVC * CCbit;
+SXV_I07: SEXTUPOLE, L := LENS, K2 := SXVC * CCbit;
+SXV_J07: SEXTUPOLE, L := LENS, K2 := SXVC * CCbit;
+SXV_K07: SEXTUPOLE, L := LENS, K2 := SXVC * CCbit;
+SXV_L07: SEXTUPOLE, L := LENS, K2 := SXVC * CCbit;
+
+
+
+
+
+
+DSS: DRIFT, L := (D5LL-LENS)/2.;
+
+//    The insertion becomes:
+//    DSS, SXV_*7, DSS, where * is the relevant superperiod
+
+//    The horizontal sextupoles are in all SS13 (installed 3/3/97)
+//    The insertion becomes:
+//    DSS, SXH_*13, DSS, where * is the relevant superperiod
+
+
+//!11.0   Drive Sextupoles
+//=================
+// XSD in "FrunAGS" sets the current in the drive sextupoles
+
+SXDP: SEXTUPOLE,  L := LENS, K2 := -SXDC * CCbit;
+SXDN: SEXTUPOLE,  L := LENS, K2 := SXDC * CCbit;
+
+SXDP_E05 : SEXTUPOLE, L := LENS, K2 := -SXDC * CCbit;
+SXDP_K05 : SEXTUPOLE, L := LENS, K2 := -SXDC * CCbit;
+
+SXDN_B05 : SEXTUPOLE, L := LENS, K2 := SXDC * CCbit;
+SXDN_H05 : SEXTUPOLE, L := LENS, K2 := SXDC  * CCbit;
+
+//    The positive drive sextupoles are in E5 and K5 (INSTALLED 3/3/97)
+//    The insertions are:
+//    DSS, SXDP, DSS
+
+//    The negative drive sextupoles are in B5 and H5 (INSTALLED 3/3/97)
+//    The insertions are:
+//    DSS, SXDN, DSS
+
+
+
+
+//!12.0 Pick up electrodes
+//=================
+DPUE:   DRIFT, L := 0.287;
+D2TX:   DRIFT, L := D2TL-0.287;
+D2LX:   DRIFT, L := D2LL-0.287;
+
+
+PUE_A02:   MONITOR;
+PUE_A04:   MONITOR;
+PUE_A08:   MONITOR;
+PUE_A12:   MONITOR;
+PUE_A14:   MONITOR;
+PUE_A18:   MONITOR;
+
+PUE_B02:   MONITOR;
+PUE_B04:   MONITOR;
+PUE_B08:   MONITOR;
+PUE_B12:   MONITOR;
+PUE_B14:   MONITOR;
+PUE_B18:   MONITOR;
+
+PUE_C02:   MONITOR;
+PUE_C04:   MONITOR;
+PUE_C08:   MONITOR;
+PUE_C12:   MONITOR;
+PUE_C14:   MONITOR;
+PUE_C18:   MONITOR;
+
+PUE_D02:   MONITOR;
+PUE_D04:   MONITOR;
+PUE_D08:   MONITOR;
+PUE_D12:   MONITOR;
+PUE_D14:   MONITOR;
+PUE_D18:   MONITOR;
+
+PUE_E02:   MONITOR;
+PUE_E04:   MONITOR;
+PUE_E08:   MONITOR;
+PUE_E12:   MONITOR;
+PUE_E14:   MONITOR;
+PUE_E18:   MONITOR;
+
+PUE_F02:   MONITOR;
+PUE_F04:   MONITOR;
+PUE_F08:   MONITOR;
+PUE_F12:   MONITOR;
+PUE_F14:   MONITOR;
+PUE_F18:   MONITOR;
+WB_PUE_F20:   MONITOR; // Wide band pick up electrode. (Not in AgsOrbitDisplay)
+
+PUE_G02:   MONITOR;
+PUE_G04:   MONITOR;
+PUE_G08:   MONITOR;
+PUE_G12:   MONITOR;
+PUE_G14:   MONITOR;
+PUE_G18:   MONITOR;
+
+PUE_H02:   MONITOR;
+PUE_H04:   MONITOR;
+PUE_H08:   MONITOR;
+PUE_H12:   MONITOR;
+PUE_H14:   MONITOR;
+PUE_H18:   MONITOR;
+
+PUE_I02:   MONITOR;
+PUE_I04:   MONITOR;
+PUE_I08:   MONITOR;
+PUE_I12:   MONITOR;
+PUE_I14:   MONITOR;
+PUE_I18:   MONITOR;
+
+PUE_J02:   MONITOR;
+PUE_J04:   MONITOR;
+PUE_J08:   MONITOR;
+PUE_J12:   MONITOR;
+PUE_J14:   MONITOR;
+PUE_J18:   MONITOR;
+
+PUE_K02:   MONITOR;
+PUE_K04:   MONITOR;
+PUE_K08:   MONITOR;
+PUE_K12:   MONITOR;
+PUE_K14:   MONITOR;
+PUE_K18:   MONITOR;
+
+PUE_L02:   MONITOR;
+PUE_L04:   MONITOR;
+PUE_L08:   MONITOR;
+PUE_L12:   MONITOR;
+PUE_L14:   MONITOR;
+PUE_L18:   MONITOR;
+
+//PUE2:  LIST:= (PUE_A02,PUE_B02,PUE_C02,PUE_D02,PUE_E02,PUE_F02, &
+//         PUE_G02,PUE_H02,PUE_I02,PUE_J02,PUE_K02,PUE_L02)
+//PUE4:  LIST:= (PUE_A04,PUE_B04,PUE_C04,PUE_D04,PUE_E04,PUE_F04, &
+//         PUE_G04,PUE_H04,PUE_I04,PUE_J04,PUE_K04,PUE_L04)
+//PUE8:  LIST:= (PUE_A08,PUE_B08,PUE_C08,PUE_D08,PUE_E08,PUE_F08, &
+//         PUE_G08,PUE_H08,PUE_I08,PUE_J08,PUE_K08,PUE_L08)
+//PUE12: LIST:= (PUE_A12,PUE_B12,PUE_C12,PUE_D12,PUE_E12,PUE_F12, &
+//         PUE_G12,PUE_H12,PUE_I12,PUE_J12,PUE_K12,PUE_L12)
+//PUE14: LIST:= (PUE_A14,PUE_B14,PUE_C14,PUE_D14,PUE_E14,PUE_F14, &
+//         PUE_G14,PUE_H14,PUE_I14,PUE_J14,PUE_K14,PUE_L14)
+//PUE18: LIST:= (PUE_A18,PUE_B18,PUE_C18,PUE_D18,PUE_E18,PUE_F18, &
+//         PUE_G18,PUE_H18,PUE_I18,PUE_J18,PUE_K18,PUE_L18)
+
+//13.0  NEW LOW FIELD STEERING MAGNETS
+
+//	Start to install 9/13/96
+//	magnets are 6 inches long with an 8.7 inch gap
+//	both horizontally and vertically
+//	each of the 4 sides has 160 turns on it
+//	in 2 layers
+//	The peak current is 25 amps
+//	The maximum continuous current is 12.5 Amps
+//	The strength is 1.2 kilogauss-inches
+//	The naming convention is DHC or DVC followed by the location
+//	They are in the 2,8, 12, and 18 locations
+//       The KICK is specified in radians
+
+
+k_cal := -0.000037 * (7.67/BRHO) * CCbit; // Calibration for the steerers (hor and ver) in radians/A.
+
+
+
+DVCA02: VKICKER, L := 0.0, KICK:=DVCA02KICK;
+DVCA08: VKICKER, L := 0.0, KICK:=DVCA08KICK;
+DVCA12: VKICKER, L := 0.0, KICK:=DVCA12KICK;
+DVCA18: VKICKER, L := 0.0, KICK:=DVCA18KICK;
+DVCB02: VKICKER, L := 0.0, KICK:=DVCB02KICK;
+DVCB08: VKICKER, L := 0.0, KICK:=DVCB08KICK;
+DVCB12: VKICKER, L := 0.0, KICK:=DVCB12KICK;
+DVCB18: VKICKER, L := 0.0, KICK:=DVCB18KICK;
+DVCC02: VKICKER, L := 0.0, KICK:=DVCC02KICK;
+DVCC08: VKICKER, L := 0.0, KICK:=DVCC08KICK;
+DVCC12: VKICKER, L := 0.0, KICK:=DVCC12KICK;
+DVCC18: VKICKER, L := 0.0, KICK:=DVCC18KICK;
+DVCD02: VKICKER, L := 0.0, KICK:=DVCD02KICK;
+DVCD08: VKICKER, L := 0.0, KICK:=DVCD08KICK;
+DVCD12: VKICKER, L := 0.0, KICK:=DVCD12KICK;
+DVCD18: VKICKER, L := 0.0, KICK:=DVCD18KICK;
+DVCE02: VKICKER, L := 0.0, KICK:=DVCE02KICK;
+DVCE08: VKICKER, L := 0.0, KICK:=DVCE08KICK;
+DVCE12: VKICKER, L := 0.0, KICK:=DVCE12KICK;
+DVCE18: VKICKER, L := 0.0, KICK:=DVCE18KICK;
+DVCF02: VKICKER, L := 0.0, KICK:=DVCF02KICK;
+DVCF08: VKICKER, L := 0.0, KICK:=DVCF08KICK;
+DVCF12: VKICKER, L := 0.0, KICK:=DVCF12KICK;
+DVCF18: VKICKER, L := 0.0, KICK:=DVCF18KICK;
+DVCG02: VKICKER, L := 0.0, KICK:=DVCG02KICK;
+DVCG08: VKICKER, L := 0.0, KICK:=DVCG08KICK;
+DVCG12: VKICKER, L := 0.0, KICK:=DVCG12KICK;
+DVCG18: VKICKER, L := 0.0, KICK:=DVCG18KICK;
+DVCH02: VKICKER, L := 0.0, KICK:=DVCH02KICK;
+DVCH08: VKICKER, L := 0.0, KICK:=DVCH08KICK;
+DVCH12: VKICKER, L := 0.0, KICK:=DVCH12KICK;
+DVCH18: VKICKER, L := 0.0, KICK:=DVCH18KICK;
+DVCI02: VKICKER, L := 0.0, KICK:=DVCI02KICK;
+DVCI08: VKICKER, L := 0.0, KICK:=DVCI08KICK;
+DVCI12: VKICKER, L := 0.0, KICK:=DVCI12KICK;
+DVCI18: VKICKER, L := 0.0, KICK:=DVCI18KICK;
+DVCJ02: VKICKER, L := 0.0, KICK:=DVCJ02KICK;
+DVCJ08: VKICKER, L := 0.0, KICK:=DVCJ08KICK;
+DVCJ12: VKICKER, L := 0.0, KICK:=DVCJ12KICK;
+DVCJ18: VKICKER, L := 0.0, KICK:=DVCJ18KICK;
+DVCK02: VKICKER, L := 0.0, KICK:=DVCK02KICK;
+DVCK08: VKICKER, L := 0.0, KICK:=DVCK08KICK;
+DVCK12: VKICKER, L := 0.0, KICK:=DVCK12KICK;
+DVCK18: VKICKER, L := 0.0, KICK:=DVCK18KICK;
+DVCL02: VKICKER, L := 0.0, KICK:=DVCL02KICK;
+DVCL08: VKICKER, L := 0.0, KICK:=DVCL08KICK;
+DVCL12: VKICKER, L := 0.0, KICK:=DVCL12KICK;
+DVCL18: VKICKER, L := 0.0, KICK:=DVCL18KICK;
+
+//Due to the author's inelegant programming all the DVC---KICK's
+//must now de defined.  Those that are being used are reset in FrunAGS
+
+DVCA02KICK: = k_cal * DVC_A02_I;
+DVCA08KICK: = k_cal * DVC_A08_I;
+DVCA12KICK: = k_cal * DVC_A12_I;
+DVCA18KICK: = k_cal * DVC_A18_I;
+DVCB02KICK: = k_cal * DVC_B02_I;
+DVCB08KICK:  = k_cal * DVC_B08_I;
+DVCB12KICK:  = k_cal * DVC_B12_I;
+DVCB18KICK:  = k_cal * DVC_B18_I;
+DVCC02KICK:  = k_cal * DVC_C02_I;
+DVCC08KICK:  = k_cal * DVC_C08_I;
+DVCC12KICK:  = k_cal * DVC_C12_I;
+DVCC18KICK:  = k_cal * DVC_C18_I;
+DVCD02KICK:  = k_cal * DVC_D02_I;
+DVCD08KICK:  = k_cal * DVC_D08_I;
+DVCD12KICK:  = k_cal * DVC_D12_I;
+DVCD18KICK:  = k_cal * DVC_D18_I;
+DVCE02KICK:  = k_cal * DVC_E02_I;
+DVCE08KICK:  = k_cal * DVC_E08_I;
+DVCE12KICK:  = k_cal * DVC_E12_I;
+DVCE18KICK:  = k_cal * DVC_E18_I;
+DVCF02KICK:  = k_cal * DVC_F02_I;
+DVCF08KICK:  = k_cal * DVC_F08_I;
+DVCF12KICK:  = k_cal * DVC_F12_I;
+DVCF18KICK:  = k_cal * DVC_F18_I;
+DVCG02KICK:  = k_cal * DVC_G02_I;
+DVCG08KICK:  = k_cal * DVC_G08_I;
+DVCG12KICK:  = k_cal * DVC_G12_I;
+DVCG18KICK:  = k_cal * DVC_G18_I;
+DVCH02KICK:  = k_cal * DVC_H02_I;
+DVCH08KICK:  = k_cal * DVC_H08_I;
+DVCH12KICK:  = k_cal * DVC_H12_I;
+DVCH18KICK:  = k_cal * DVC_H18_I;
+DVCI02KICK:  = k_cal * DVC_I02_I;
+DVCI08KICK:  = k_cal * DVC_I08_I;
+DVCI12KICK:  = k_cal * DVC_I12_I;
+DVCI18KICK:  = k_cal * DVC_I18_I;
+DVCJ02KICK:  = k_cal * DVC_J02_I;
+DVCJ08KICK:  = k_cal * DVC_J08_I;
+DVCJ12KICK:  = k_cal * DVC_J12_I;
+DVCJ18KICK:  = k_cal * DVC_J18_I;
+DVCK02KICK:  = k_cal * DVC_K02_I;
+DVCK08KICK:  = k_cal * DVC_K08_I;
+DVCK12KICK:  = k_cal * DVC_K12_I;
+DVCK18KICK:  = k_cal * DVC_K18_I;
+DVCL02KICK:  = k_cal * DVC_L02_I;
+DVCL08KICK:  = k_cal * DVC_L08_I;
+DVCL12KICK:  = k_cal * DVC_L12_I;
+DVCL18KICK:  = k_cal * DVC_L18_I;
+
+
+//14.0  NEW LOW FIELD HORIZONTAL STEERING MAGNETS
+
+//	Start to install 5/21/98
+//	magnets are 6 inches long with an 8.7 inch gap
+//	both horizontally and vertically
+//	each of the 4 sides has 160 turns on it
+//	in 2 layers
+//	The peak current is 25 amps
+//	The maximum continuous current is 12.5 Amps
+//	The strength is 1.2 kilogauss-inches
+//	The naming convention is DHC or DVC followed by the location
+//	They are in the 2,8, 12, and 18 locations
+//       The KICK is specified in radians
+
+DHCA02: HKICKER, L := 0.0, KICK:=DHCA02KICK;
+DHCA08: HKICKER, L := 0.0, KICK:=DHCA08KICK;
+DHCA12: HKICKER, L := 0.0, KICK:=DHCA12KICK;
+DHCA18: HKICKER, L := 0.0, KICK:=DHCA18KICK;
+DHCB02: HKICKER, L := 0.0, KICK:=DHCB02KICK;
+DHCB08: HKICKER, L := 0.0, KICK:=DHCB08KICK;
+DHCB12: HKICKER, L := 0.0, KICK:=DHCB12KICK;
+DHCB18: HKICKER, L := 0.0, KICK:=DHCB18KICK;
+DHCC02: HKICKER, L := 0.0, KICK:=DHCC02KICK;
+DHCC08: HKICKER, L := 0.0, KICK:=DHCC08KICK;
+DHCC12: HKICKER, L := 0.0, KICK:=DHCC12KICK;
+DHCC18: HKICKER, L := 0.0, KICK:=DHCC18KICK;
+DHCD02: HKICKER, L := 0.0, KICK:=DHCD02KICK;
+DHCD08: HKICKER, L := 0.0, KICK:=DHCD08KICK;
+DHCD12: HKICKER, L := 0.0, KICK:=DHCD12KICK;
+DHCD18: HKICKER, L := 0.0, KICK:=DHCD18KICK;
+DHCE02: HKICKER, L := 0.0, KICK:=DHCE02KICK;
+DHCE08: HKICKER, L := 0.0, KICK:=DHCE08KICK;
+DHCE12: HKICKER, L := 0.0, KICK:=DHCE12KICK;
+DHCE18: HKICKER, L := 0.0, KICK:=DHCE18KICK;
+DHCF02: HKICKER, L := 0.0, KICK:=DHCF02KICK;
+DHCF08: HKICKER, L := 0.0, KICK:=DHCF08KICK;
+DHCF12: HKICKER, L := 0.0, KICK:=DHCF12KICK;
+DHCF18: HKICKER, L := 0.0, KICK:=DHCF18KICK;
+DHCG02: HKICKER, L := 0.0, KICK:=DHCG02KICK;
+DHCG08: HKICKER, L := 0.0, KICK:=DHCG08KICK;
+DHCG12: HKICKER, L := 0.0, KICK:=DHCG12KICK;
+DHCG18: HKICKER, L := 0.0, KICK:=DHCG18KICK;
+DHCH02: HKICKER, L := 0.0, KICK:=DHCH02KICK;
+DHCH08: HKICKER, L := 0.0, KICK:=DHCH08KICK;
+DHCH12: HKICKER, L := 0.0, KICK:=DHCH12KICK;
+DHCH18: HKICKER, L := 0.0, KICK:=DHCH18KICK;
+DHCI02: HKICKER, L := 0.0, KICK:=DHCI02KICK;
+DHCI08: HKICKER, L := 0.0, KICK:=DHCI08KICK;
+DHCI12: HKICKER, L := 0.0, KICK:=DHCI12KICK;
+DHCI18: HKICKER, L := 0.0, KICK:=DHCI18KICK;
+DHCJ02: HKICKER, L := 0.0, KICK:=DHCJ02KICK;
+DHCJ08: HKICKER, L := 0.0, KICK:=DHCJ08KICK;
+DHCJ12: HKICKER, L := 0.0, KICK:=DHCJ12KICK;
+DHCJ18: HKICKER, L := 0.0, KICK:=DHCJ18KICK;
+DHCK02: HKICKER, L := 0.0, KICK:=DHCK02KICK;
+DHCK08: HKICKER, L := 0.0, KICK:=DHCK08KICK;
+DHCK12: HKICKER, L := 0.0, KICK:=DHCK12KICK;
+DHCK18: HKICKER, L := 0.0, KICK:=DHCK18KICK;
+DHCL02: HKICKER, L := 0.0, KICK:=DHCL02KICK;
+DHCL08: HKICKER, L := 0.0, KICK:=DHCL08KICK;
+DHCL12: HKICKER, L := 0.0, KICK:=DHCL12KICK;
+DHCL18: HKICKER, L := 0.0, KICK:=DHCL18KICK;
+
+//Due to the author's inelegant programming all the DHC---KICK's
+//must now de defined.  Those that are being used are reset in FrunAGS
+
+DHCA02KICK:  = k_cal * DHC_A02_I;
+DHCA08KICK:  = k_cal * DHC_A08_I;
+DHCA12KICK:  = k_cal * DHC_A12_I;
+DHCA18KICK:  = k_cal * DHC_A18_I;
+DHCB02KICK:  = k_cal * DHC_B02_I;
+DHCB08KICK:  = k_cal * DHC_B08_I;
+DHCB12KICK:  = k_cal * DHC_B12_I;
+DHCB18KICK:  = k_cal * DHC_B18_I;
+DHCC02KICK:  = k_cal * DHC_C02_I;
+DHCC08KICK:  = k_cal * DHC_C08_I;
+DHCC12KICK:  = k_cal * DHC_C12_I;
+DHCC18KICK:  = k_cal * DHC_C18_I;
+DHCD02KICK:  = k_cal * DHC_D02_I;
+DHCD08KICK:  = k_cal * DHC_D08_I;
+DHCD12KICK:  = k_cal * DHC_D12_I;
+DHCD18KICK:  = k_cal * DHC_D18_I;
+DHCE02KICK:  = k_cal * DHC_E02_I;
+DHCE08KICK:  = k_cal * DHC_E08_I;
+DHCE12KICK:  = k_cal * DHC_E12_I;
+DHCE18KICK:  = k_cal * DHC_E18_I;
+DHCF02KICK:  = k_cal * DHC_F02_I;
+DHCF08KICK:  = k_cal * DHC_F08_I;
+DHCF12KICK:  = k_cal * DHC_F12_I;
+DHCF18KICK:  = k_cal * DHC_F18_I;
+DHCG02KICK:  = k_cal * DHC_G02_I;
+DHCG08KICK:  = k_cal * DHC_G08_I;
+DHCG12KICK:  = k_cal * DHC_G12_I;
+DHCG18KICK:  = k_cal * DHC_G18_I;
+DHCH02KICK:  = k_cal * DHC_H02_I;
+DHCH08KICK:  = k_cal * DHC_H08_I;
+DHCH12KICK:  = k_cal * DHC_H12_I;
+DHCH18KICK:  = k_cal * DHC_H18_I;
+DHCI02KICK:  = k_cal * DHC_I02_I;
+DHCI08KICK:  = k_cal * DHC_I08_I;
+DHCI12KICK:  = k_cal * DHC_I12_I;
+DHCI18KICK:  = k_cal * DHC_I18_I;
+DHCJ02KICK:  = k_cal * DHC_J02_I;
+DHCJ08KICK:  = k_cal * DHC_J08_I;
+DHCJ12KICK:  = k_cal * DHC_J12_I;
+DHCJ18KICK:  = k_cal * DHC_J18_I;
+DHCK02KICK:  = k_cal * DHC_K02_I;
+DHCK08KICK:  = k_cal * DHC_K08_I;
+DHCK12KICK:  = k_cal * DHC_K12_I;
+DHCK18KICK:  = k_cal * DHC_K18_I;
+DHCL02KICK:  = k_cal * DHC_L02_I;
+DHCL08KICK:  = k_cal * DHC_L08_I;
+DHCL12KICK:  = k_cal * DHC_L12_I;
+DHCL18KICK:  = k_cal * DHC_L18_I;
+
+//------------------------------------------------------------
+//!	 15.0  Extraction Kickers and elements, and sublines
+//		K. Brown (8/31/98)
+//
+//        4/12/99 - Added G10 and E05 kickers for fast extraction
+//		   to SEB lines.
+//------------------------------------------------------------
+
+ESH20:  HKICKER, L := LES,    Kick:= H20kick * CCbit;
+SMF05:  HKICKER, L := LF05,   Kick:= F05kick * CCbit;
+SMF10:  HKICKER, L := LF10,   Kick:= F10kick * CCbit;
+SMF10a: HKICKER, L := LF10/2, Kick:= F10kick/2 * CCbit;
+SMF10b: HKICKER, L := LF10/2, Kick:= F10kick/2 * CCbit;
+SMH10a: HKICKER, L := LF10/2, Kick:= H10kick/2 * CCbit;
+SMH10b: HKICKER, L := LF10/2, Kick:= H10kick/2 * CCbit;
+
+//D2LX:   DRIFT, L := D2LL-0.287
+
+F10K1:  QUADRUPOLE,  L := 0.1, K1 := F10Qk1;
+H10K1:  QUADRUPOLE,  L := 0.1, K1 := H10Qk1;
+DSH10n: DRIFT, L := DSH10p-0.1;
+DSF10n: DRIFT, L := DSF10p-0.1;
+
+//  the rest are all the same magnet  different locations
+//  SMG10  Hkick	 L := LG10  Kick:= G10tkick, cuts="> X2", xc=,-0.05
+
+
+G10Marker: marker;
+SMG10: HKICKER, L := LG10,  Kick := G10tkick;
+
+
+//SMA5:  HKICKER, L := LG10,  Kick:= A5kick
+//SMA10: HKICKER, L := LG10,  Kick:= A10kick
+//SMA20: HKICKER, L := LG10,  Kick:= A20kick
+//SMB10: HKICKER, L := LG10,  Kick:= B10kick
+//SMB20: HKICKER, L := LG10,  Kick:= B20kick
+//SMC10: HKICKER, L := LG10,  Kick:= C10kick
+//SMC20: HKICKER, L := LG10,  Kick:= C20kick
+//SMD10: HKICKER, L := LG10,  Kick:= D10kick
+//SMD20: HKICKER, L := LG10,  Kick:= D20kick
+//SME10: HKICKER, L := LG10,  Kick:= E10kick
+//SME20: HKICKER, L := LG10,  Kick:= E20kick
+//SMF20: HKICKER, L := LG10,  Kick:= F20kick
+//SMG10: HKICKER, L := LG10,  Kick:= G10tkick
+//SMG20: HKICKER, L := LG10,  Kick:= G20tkick
+//SMH20: HKICKER, L := LG10,  Kick:= H20fkick
+//SMI10: HKICKER, L := LG10,  Kick:= I10kick
+//SMI20: HKICKER, L := LG10,  Kick:= I20kick
+//SMJ10: HKICKER, L := LG10,  Kick:= J10kick
+//SMJ20: HKICKER, L := LG10,  Kick:= J20kick
+//SMK10: HKICKER, L := LG10,  Kick:= K10kick
+//SMK20: HKICKER, L := LG10,  Kick:= K20kick
+//SML10: HKICKER, L := LG10,  Kick:= L10kick
+//SML20: HKICKER, L := LG10,  Kick:= L20kick
+
+// High field Vertical bumps.  10/1/03 KAB
+  F20VK:=(1./BRHO)*0.0002657*F20VBI;
+  G20VK:=(1./BRHO)*0.0002657*G20VBI;
+  SKF20: VKICKER, L := LVB20, Kick:= F20VK;
+  SKG20: VKICKER, L := LVB20, Kick:= G20VK;
+
+F16MID:  MARKER;
+F17MID: MARKER;
+F18MID: MARKER;
+F19MID: MARKER;
+F20MID: MARKER;
+G2MID:  MARKER;
+G3MID:  MARKER;
+G4MID:  MARKER;
+G5MID:  MARKER;
+G6MID:  MARKER;
+G7MID:  MARKER;
+
+H5MID:  MARKER;
+H6MID:  MARKER;
+H7MID:  MARKER;
+H8MID:  MARKER;
+H9MID:  MARKER;
+H10MID: MARKER;
+H20USF: MARKER;
+H10USF: MARKER;
+H10DSF: MARKER;
+F5USF:  MARKER;
+SSF05:   Line:= (F5USF, SMF05, DSF05);
+SSH10:   Line:= (DSH10n, H10USF,SMH10a,H10MID,H10K1,SMH10b,H10DSF,DSH10);
+SSF10:   Line:= (DSF10n, SMF10a,F10K1,SMF10b);
+//  SSF10   Line:= (DSF10, SMF10)
+SSH20:   Line:= (H20USF,ESH20,DSH20);
+//-------------------------------------------------------------
+SSA10:   Line:= (DSG10, SMA10);
+SSA20:   Line:= (DSG10, SMA20);
+SSB10:   Line:= (DSG10, SMB10);
+SSB20:   Line:= (DSG10, SMB20);
+SSC10:   Line:= (DSG10, SMC10);
+SSC20:   Line:= (DSG10, SMC20);
+SSD10:   Line:= (DSG10, SMD10);
+SSD20:   Line:= (DSG10, SMD20);
+SSE10:   Line:= (DSG10, SME10);
+SSE20:   Line:= (DSG10, SME20);
+//SSF20:   Line:= (DSG10, SMF20)
+SSF20:   Line:= (DSF20U, SKF20,DSF20D)  ; // now has f20 vertical bump 10/1/03 KAB
+SSG10:   Line:= (DSG10, G10Marker, SMG10); // DSG10 + SMG10 + DSG10:= G10 straight section
+//SSG20:   Line:= (DSG10, SMG20)
+SSG20:   Line:= (DSG20U, SKG20,DSG20D);
+SSH20f:  Line:= (DSG10, SMH20);
+SSI10:   Line:= (DSG10, SMI10);
+SSI20:   Line:= (DSG10, SMI20);
+SSJ10:   Line:= (DSG10, SMJ10);
+SSJ20:   Line:= (DSG10, SMJ20);
+SSK10:   Line:= (DSG10, SMK10);
+SSK20:   Line:= (DSG10, SMK20);
+SSL10:   Line:= (DSG10, SML10);
+SSL20:   Line:= (DSG10, SML20);
+
+//------------------------------------------------------------
+
+
+//==============================================================================
+// RF Cavities
+//  2/5/2018 Just adding one cavity at B20 ("Cavity BC") for now and associated drifts
+//   
+//==============================================================================
+
+D10RF: DRIFT, L := 59.99367 *CONV -0.5;
+RFBC : RFCAVITY, L=1.0, VOLT=0.0, FREQ=4.0;
+
+//!!  LINES
+//========
+//========
+//A05KICKER: MARKER;
+A05KICKER: HKICKER, L:=0, KICK:=A05KICK;
+
+J10DUMP: MARKER;
+C05IPM: MARKER;
+E15IPM: MARKER;
+
+// 11/21/13 - kab, Steve Tepikian
+//  added new electron-collector IPMs
+// Model the eipms as a kickers to enable beta function measurment simulation -- vhs 8/2/2017
+D05EIPM: HKICKER, L := 0.0, KICK:=D05EIPMKICK;
+D15EIPM: VKICKER, L := 0.0, KICK:=D15EIPMKICK;
+
+
+
+//===================================================================================
+// H10toH13 for extraction
+//   Extracted beam travels through the fringe of the AGS main magnets between H10 and H13
+//   This matrix includes the effects of H10 and transports from the entrance to H10 to the start of AtR
+//===================================================================================
+
+R11T2:= 2.2886 ;
+R12T2:= 14.523 ;
+R21T2:= 0.26387;
+R22T2:= 2.1114 ;
+DT2:=   0.1566 ;
+DPT2:=  0.0156 ;
+
+ET2:=R21T2*DT2-R11T2*DPT2;
+FT2:=R22T2*DT2-R12T2*DPT2;
+
+R33T2:= 0.050902;
+R34T2:= 6.2687  ;
+R43T2:=-0.15730 ;
+R44T2:= 0.19950 ;
+
+MH10H13: MATRIX, TYPE=TSNAKE,L=9.9309 ,//
+ RM11= R11T2 ,//
+ RM12= R12T2 ,//
+ RM13=  0.000 ,//
+ RM14=  0.000 ,//
+ RM15=  0. ,//
+ RM16=  DT2 ,//
+ RM21=  R21T2 ,//
+ RM22=  R22T2 ,//
+ RM23=  0.0000 ,//
+ RM24=  0.0000 ,//
+ RM25=  0. ,//
+ RM26=  DPT2 ,//
+ RM31= -0.0000 ,//
+ RM32= -0.0000 ,//
+ RM33=  R33T2 ,//
+ RM34=  R34T2   ,//
+ RM35=  0. ,//
+ RM36= -0.000 ,//
+ RM41=  0.000 ,//
+ RM42=  0.000 ,//
+ RM43=  R43T2  ,//
+ RM44=  R44T2 ,//
+ RM45=  0. ,//
+ RM46= -0. ,//
+ RM51=  ET2  ,// !1474 ,// ! -0.01474
+ RM52=  FT2  ,// !1514 ,//  ! -0.1514
+ RM53=  0. ,//
+ RM54= -0. ,//
+ RM55=  1. ,//
+ RM56= -0. ,//
+ RM61=  0. ,//
+ RM62=  0. ,//
+ RM63=  0. ,//
+ RM64=  0. ,//
+ RM65=  0. ,//
+ RM66=  1.;
+
+
+H10toH13: Line:=(MH10H13);
+
+// =====================================
+//   INSTRUMENTATION
+// =====================================
+
+mwa15: marker;
+
+TUNEKICK_H: TKICKER, L=0.0, HKICK=0.0;
+TUNEKICK_V: TKICKER, L=0.0, VKICK=0.0;
+TUNEMETER_PUE   : MONITOR, L=0.0;
+
+// ==========
+// Definition for pulsed skew quads 3/7/2024
+//  Pulse Skew Quadrupoles for Spin Resonance Correction
+//  Motivation: Phys. Rev. Accel. Beams 24, 031001 
+// =========
+
+LQS_hres = 0.169418;
+
+
+qshres_A10: quadrupole, l:=LQS_hres, K1S := Khres_A10;
+qshres_B07: quadrupole, l:=LQS_hres, K1S := Khres_B07;
+qshres_C07: quadrupole, l:=LQS_hres, K1S := Khres_C07;
+qshres_C20: quadrupole, l:=LQS_hres, K1S := Khres_C20;
+qshres_D07: quadrupole, l:=LQS_hres, K1S := Khres_D07;
+qshres_E05: quadrupole, l:=LQS_hres, K1S := Khres_E05;
+qshres_F07: quadrupole, l:=LQS_hres, K1S := Khres_F07;
+qshres_F20: quadrupole, l:=LQS_hres, K1S := Khres_F20;
+qshres_G20: quadrupole, l:=LQS_hres, K1S := Khres_G20;
+qshres_H05: quadrupole, l:=LQS_hres, K1S := Khres_H05;
+qshres_H20: quadrupole, l:=LQS_hres, K1S := Khres_H20;
+qshres_I07: quadrupole, l:=LQS_hres, K1S := Khres_I07;
+qshres_K05: quadrupole, l:=LQS_hres, K1S := Khres_K05;
+qshres_K07: quadrupole, l:=LQS_hres, K1S := Khres_K07;
+qshres_K15: quadrupole, l:=LQS_hres, K1S := Khres_K15;
+
+
+!========================================================
+! Modified drifts for the pulsed skew quads:
+!========================================================
+
+DA10_1: drift, l = 89.990505*conv-LQS_hres/2.0;
+DA10_2: drift, l = d10ltot-(89.990505*conv)-LQS_hres/2.0;
+
+DB07_1: drift, l = d5ll-lens-LQS_hres;
+DC07_1: drift, l = d5ll-lens-LQS_hres;
+DD07_1: drift, l = d5ll-lens-LQS_hres;
+DE05_1: drift, l = d5ll-lens-LQS_hres;
+DF07_1: drift, l = d5ll-lens-LQS_hres;
+DH05_1: drift, l = d5ll-lens-LQS_hres;
+DI07_1: drift, l = d5ll-lens-LQS_hres;
+DK05_1: drift, l = d5ll-lens-LQS_hres;
+DK07_1: drift, l = d5ll-lens-LQS_hres;
+
+DK15_1: drift, l=d2hl-LQS_hres/2.0;
+DK15_2: drift, l=d2hl-LQS_hres/2.0;
+
+DC20_1: drift, l=D10l-LQS_hres/2.0;
+DC20_2: drift, l=D10l-LQS_hres/2.0;
+
+DF20_1: drift, l=D10l-LQS_hres/2.0;
+DF20_2: drift, l=D10l-LQS_hres/2.0;
+
+DG20_1: drift, L=d10l/2.0-LQS_hres/2.0;
+DG20_2: drift, L=d10l/2.0-LQS_hres/2.0;
+
+DH20_1: drift, l=D10l-LQS_hres/2.0;
+DH20_2: drift, l=D10l-LQS_hres/2.0;
+
+
+
+SUPERA:   LINE:= (                           
+MM_A01BF,  D2S  ,                                //A1
+MM_A02BF,  DPUE , PUE_A02  , DHCA02, DVCA02, D2TX,  //A2
+MM_A03CD,  DSQ  , QV_A03  , QP_A03  , DSQ   ,        //A3
+MM_A04CD,  DPUE , PUE_A04  , D2LX  ,                //A4
+MM_A05AF,  D2H  , A05KICKER, D2H   ,                //A5
+MM_A06AF,  D2L  ,                                //A6
+MM_A07CD,  DSS  , SXV_A07   , DSS,                   //A7
+MM_A08CD,  DPUE , PUE_A08  , DHCA08, DVCA08, D2TX,  //A8
+MM_A09BF,  D2S  ,                                //A9
+MM_A10BF, SSA10, DSG10,                         //A10 including kicker at A10
+//A10BF,D10,D10,                              &!old A10
+MM_A11BD, D2S  ,                                //A11
+MM_A12BD, DPUE , PUE_A12 , DHCA12, DVCA12, D2TX,  //A12
+MM_A13CF, DSS  , SXH_A13   , DSS,                   //A13
+MM_A14CF, DPUE , PUE_A14 , D2LX,                  //A14
+MM_A15AD, D2H  , mwa15, D2H,                           //A15
+MM_A16AD, D2L  ,                                //A16
+MM_A17CF, DSQ  , QH_A17  , QGTR1a , DSQ,           //A17
+MM_A18CF, DPUE , PUE_A18 , DHCA18, DVCA18, D2TX,  //A18
+MM_A19BD, D2S  ,                                //A19
+MM_A20BD, SSA20, DSG10)                          ; //A20 including kicker at A20
+// old A20
+//A20BD,D10,D10)!A20
+
+
+
+//option, echo;
+SUPERAnk:   LINE:= (                         
+MM_A01BF,  D2S  ,                                //A1
+MM_A02BF,  DPUE , PUE_A02  , DHCA02, DVCA02, D2TX,  //A2
+MM_A03CD,  DSQ  , QV_A03  , QP_A03  , DSQ   ,        //A3
+MM_A04CD,  DPUE , PUE_A04  , D2LX  ,                //A4
+MM_A05AF,  D2H  , A05KICKER, D2H   ,                //A5
+MM_A06AF,  D2L  ,                                //A6
+MM_A07CD,  DSS  , SXV_A07   , DSS,                   //A7
+MM_A08CD,  DPUE , PUE_A08  , DHCA08, DVCA08, D2TX,  //A8
+MM_A09BF,  D2S  ,                                //A9
+//A10BF, SSA10, DSG10,                         &!A10 including kicker at A10
+MM_A10BF, DA10_1  ,TUNEKICK_H, qshres_A10, TUNEKICK_V, DA10_2,    //old A10
+MM_A11BD, D2S  ,                                //A11
+MM_A12BD, DPUE , PUE_A12 , DHCA12, DVCA12, D2TX,  //A12
+MM_A13CF, DSS  , SXH_A13   , DSS,                   //A13
+MM_A14CF, DPUE , PUE_A14 , D2LX,                  //A14
+MM_A15AD, D2H  , mwa15,D2H,                           //A15
+MM_A16AD, D2L  ,                                //A16
+MM_A17CF, DSQ  , QH_A17  ,D7cm, QGTR1a , DSQm7,           //A17
+MM_A18CF, DPUE , PUE_A18 , DHCA18, DVCA18, D2TX,  //A18
+MM_A19BD, D2SX, QThin_A19, D2SX  ,                                //A19
+//A20BD, SSA20, DSG10)                          !A20 including kicker at A20
+MM_A20BD, D10SKH, CSNK, csnk_mark ,D10SKH); //A20
+
+
+
+SUPERA_MAT:  LINE=(
+MM_A01BF,  D2S  ,                                //A1
+MM_A02BF,  DPUE , PUE_A02  , DHCA02, DVCA02, D2TX,  //A2
+MM_A03CD,  DSQ  , QV_A03  , QP_A03  , DSQ   ,        //A3
+MM_A04CD,  DPUE , PUE_A04  , D2LX  ,                //A4
+MM_A05AF,  D2H  , A05KICKER, D2H   ,                //A5
+MM_A06AF,  D2L  ,                                //A6
+MM_A07CD,  DSS  , SXV_A07   , DSS,                   //A7
+MM_A08CD,  DPUE , PUE_A08  , DHCA08, DVCA08, D2TX,  //A8
+MM_A09BF,  D2S  ,                                //A9
+//A10BF, SSA10, DSG10,                         &!A10 including kicker at A10
+MM_A10BF, D10  , D10,                              //old A10
+MM_A11BD, D2S  ,                                //A11
+MM_A12BD, DPUE , PUE_A12 , DHCA12, DVCA12, D2TX,  //A12
+MM_A13CF, DSS  , SXH_A13   , DSS,                   //A13
+MM_A14CF, DPUE , PUE_A14 , D2LX,                  //A14
+MM_A15AD, D2H  , D2H,                           //A15
+MM_A16AD, D2L  ,                                //A16
+MM_A17CF, DSQ  , QH_A17  ,D7cm, QGTR1a , DSQm7,           //A17
+MM_A18CF, DPUE , PUE_A18 , DHCA18, DVCA18, D2TX,  //A18
+MM_A19BD, D2SX, QThin_A19, D2SX  ,                                //A19
+//A20BD, SSA20, DSG10)                          !A20 including kicker at A20
+MM_A20BD, D10SKH, CSNK, D10SKH); //A20
+
+
+
+
+
+
+
+SUPERANM:   LINE:= ( D10,                        
+MM_A01BF,  D2S  ,                                //A1
+MM_A02BF,  DPUE , PUE_A02  , DHCA02, DVCA02, D2TX,  //A2
+MM_A03CD,  DSQ  , QV_A03  , QP_A03  , DSQ   ,        //A3
+MM_A04CD,  DPUE , PUE_A04  , D2LX  ,                //A4
+MM_A05AF,  D2H  , A05KICKER, D2H   ,                //A5
+MM_A06AF,  D2L  ,                                //A6
+MM_A07CD,  DSS  , SXV_A07   , DSS,                   //A7
+MM_A08CD,  DPUE , PUE_A08  , DHCA08, DVCA08, D2TX,  //A8
+MM_A09BF,  D2S  ,                                //A9
+//A10BF, SSA10, DSG10,                         &!A10 including kicker at A10
+MM_A10BF, D10  , D10,                              //old A10
+MM_A11BD, D2S  ,                                //A11
+MM_A12BD, DPUE , PUE_A12 , DHCA12, DVCA12, D2TX,  //A12
+MM_A13CF, DSS  , SXH_A13   , DSS,                   //A13
+MM_A14CF, DPUE , PUE_A14 , D2LX,                  //A14
+MM_A15AD, D2H  , D2H,                           //A15
+MM_A16AD, D2L  ,                                //A16
+MM_A17CF, DSQ  , QH_A17  , QGTR1a , DSQ,           //A17
+MM_A18CF, DPUE , PUE_A18 , DHCA18, DVCA18, D2TX,  //A18
+MM_A19BD, D2S  ,                                //A19
+//A20BD, SSA20, DSG10)                          !A20 including kicker at A20
+MM_A20BD, D10  ,D10); //A20
+
+
+SUPERB:   LINE:= (                           
+MM_B01BF,  D2S  ,                                //B1
+MM_B02BF,  DPUE , PUE_B02  , DHCB02, DVCB02, D2TX,  //B2
+MM_B03CD,  DSQ  , QV_B03  , QP_B03  , DSQ   ,        //B3
+MM_B04CD,  DPUE , PUE_B04  , D2LX  ,                //B4
+MM_B05AF,  DSS  , SXDN_B05  , DSS   ,                //B5
+MM_B06AF,  D2L  ,                                //B6
+MM_B07CD,  DSS  , SXV_B07   , DSS   ,                //B7
+MM_B08CD,  DPUE , PUE_B08  , DHCB08, DVCB08, D2TX,  //B8
+MM_B09BF,  D2S  ,                                //B9
+MM_B10BF, SSB10, DSG10 ,                        //B10
+//B10BF,D10,D10,                              &!old B10
+MM_B11BD, D2S  ,                                //B11
+MM_B12BD, DPUE , PUE_B12 , DHCB12, DVCB12, D2TX,  //B12
+MM_B13CF, DSS  , SXH_B13   , DSS   ,                //B13
+MM_B14CF, DPUE , PUE_B14 , D2LX  ,                //B14
+MM_B15AD, D2H  , D2H   ,                        //B15
+MM_B16AD, D2L  ,                                //B16
+MM_B17CF, DSQ  , QH_B17  , QS_B17  , DSQ   ,        //B17
+MM_B18CF, DPUE , PUE_B18 , DHCB18, DVCB18, D2TX,  //B18
+MM_B19BD, D2S  ,                                //B19
+MM_B20BD, SSB20, DSG10)                            ; //B20
+//B20BD, D10  , D10)                            !old B20
+
+SUPERBnk:   LINE:= (                         
+MM_B01BF,  D2SX  , QThin_B01, D2SX,                                //B1
+MM_B02BF,  DPUE , PUE_B02  , DHCB02, DVCB02, D2TX,  //B2
+MM_B03CD,  DSQ  , QV_B03  , QP_B03  , DSQ   ,        //B3
+MM_B04CD,  DPUE , PUE_B04  , D2LX  ,                //B4
+MM_B05AF,  DSS  , SXDN_B05  , DSS   ,                //B5
+MM_B06AF,  D2L  ,                                //B6
+MM_B07CD, qshres_B07, DB07_1, SXV_B07 ,                //B7
+MM_B08CD,  DPUE , PUE_B08  , DHCB08, DVCB08, D2TX,  //B8
+MM_B09BF,  D2S  ,                                //B9
+//B10BF, SSB10, DSG10 ,                        &!B10
+MM_B10BF, D10  , D10,                           //old B10
+MM_B11BD, D2S  ,                                //B11
+MM_B12BD, DPUE , PUE_B12 , DHCB12, DVCB12, D2TX,  //B12
+MM_B13CF, DSS  , SXH_B13   , DSS   ,                //B13
+MM_B14CF, DPUE , PUE_B14 , D2LX  ,                //B14
+MM_B15AD, D2H  , D2H   ,                        //B15
+MM_B16AD, D2L  ,                                //B16
+MM_B17CF, DSQ  , QH_B17  , QS_B17  , DSQ   ,        //B17
+MM_B18CF, DPUE , PUE_B18 , DHCB18, DVCB18, D2TX,  //B18
+MM_B19BD, D2S  ,                                //B19
+//B20BD, SSB20, DSG10)                            !B20
+MM_B20BD, D10RF  , RFBC, D10RF)                            ; //old B20
+
+SUPERC:   LINE:= (                           
+MM_C01BF , D2S  ,                                //C1
+MM_C02BF , DPUE , PUE_C02  , DHCC02, DVCC02, D2TX,  //C2
+MM_C03CD , DSQ  , QV_C03  , QP_C03  , DSQ   ,        //C3
+MM_C04CD , DPUE , PUE_C04  , D2LX  ,                //C4
+MM_C05AF , D2H  , C05IPM ,  D2H  ,                //C5
+MM_C06AF , D2L  ,                                //C6
+MM_C07CD , DSS  , SXV_C07   , DSS   ,                //C7
+MM_C08CD , DPUE , PUE_C08  , DHCC08, DVCC08, D2TX,  //C8
+MM_C09BF , D2S  ,                                //C9
+MM_C10BF, SSC10, DSG10 ,                        //C10
+//C10BF, D10  , D10   ,                       &!old C10
+MM_C11BD, D2S  ,                                //C11
+MM_C12BD, DPUE , PUE_C12 , DHCC12, DVCC12, D2TX,  //C12
+MM_C13CF, DSS  , SXH_C13   , DSS   ,                //C13
+MM_C14CF, DPUE , PUE_C14 , D2LX  ,                //C14
+MM_C15AD, D2H  , D2H   ,                        //C15
+MM_C16AD, D2L  ,                                //C16
+MM_C17CF, DSQ  , QH_C17  , QGTR2c , DSQ   ,        //C17
+MM_C18CF, DPUE , PUE_C18 , DHCC18, DVCC18, D2TX,  //C18
+MM_C19BD, D2S  ,                                //C19
+MM_C20BD, SSC20, DSG10)                          ; //C20 including kicker at C20
+// old section
+//C20BD,D10,D10)!C20
+
+ C15POL: MARKER;
+
+
+
+SUPERCnk:   LINE:= (                         
+MM_C01BF , D2S  ,                                //C1
+MM_C02BF , DPUE , PUE_C02  , DHCC02, DVCC02, D2TX,  //C2
+MM_C03CD , DSQ  , QV_C03  , QP_C03  , DSQ   ,        //C3
+MM_C04CD , DPUE , PUE_C04  , D2LX  ,                //C4
+MM_C05AF , D2H  ,C05IPM,  D2H   ,                        //C5
+MM_C06AF , D2L  ,                                //C6
+MM_C07CD , qshres_C07, DC07_1, SXV_C07   ,                //C7
+MM_C08CD , DPUE , PUE_C08  , DHCC08, DVCC08, D2TX,  //C8
+MM_C09BF , D2S  ,                                //C9
+//C10BF, SSC10, DSG10 ,                       &!C10
+MM_C10BF, D10  , D10   ,                        //old C10
+MM_C11BD, D2S  ,                                //C11
+MM_C12BD, DPUE , PUE_C12 , DHCC12, DVCC12, D2TX,  //C12
+MM_C13CF, DSS  , SXH_C13   , DSS   ,                //C13
+MM_C14CF, DPUE , PUE_C14 , D2LX  ,                //C14
+MM_C15AD, D2H , C15POL, D2H   ,                        //C15
+MM_C16AD, D2L  ,                                //C16
+MM_C17CF, DSQ  , QH_C17  , QGTR2c , DSQ   ,        //C17
+MM_C18CF, DPUE , PUE_C18 , DHCC18, DVCC18, D2TX,  //C18
+MM_C19BD, D2S  ,                                //C19
+//C20BD, SSC20, DSG10)                         !C20 including kicker at C20
+MM_C20BD, qshres_C20, DC20_1  , DC20_2); //C20
+
+SUPERD:   LINE:= (                           
+MM_D01BF , D2S  ,                                //D1
+MM_D02BF , DPUE , PUE_D02  , DHCD02, DVCD02, D2TX,  //D2
+MM_D03CD , DSQ  , QV_D03  , QP_D03  , DSQ   ,        //D3
+MM_D04CD , DPUE , PUE_D04  , D2LX  ,                //D4
+MM_D05AF , D2H  , D05EIPM, D2H   ,                  //D5
+MM_D06AF , D2L  ,                                //D6
+MM_D07CD , DSS  , SXV_D07   , DSS   ,                //D7
+MM_D08CD , DPUE , PUE_D08  , DHCD08, DVCD08, D2TX,  //D8
+MM_D09BF , D2S  ,                                //D9
+MM_D10BF, SSD10, DSG10 ,                        //D10
+//D10BF,D10,D10,                              &!old D10
+MM_D11BD, D2S  ,                                //D11
+MM_D12BD, DPUE , PUE_D12 , DHCD12, DVCD12, D2TX,  //D12
+MM_D13CF, DSS  , SXH_D13   , DSS   ,                //D13
+MM_D14CF, DPUE , PUE_D14 , D2LX  ,                //D14
+MM_D15AD, D2H  , D15EIPM, D2H   ,                        //D15
+MM_D16AD, D2L  ,                                //D16
+MM_D17CF, DSQ  , QH_D17  , QS_D17  , DSQ   ,        //D17
+MM_D18CF, DPUE , PUE_D18 , DHCD18, DVCD18, D2TX,  //D18
+MM_D19BD, D2S  ,                                //D19
+MM_D20BD, SSD20  , DSG10)                        ; //D20
+//D20BD, D10  , D10)                           !old D20
+
+SUPERDnk:   LINE:= (                         
+MM_D01BF , D2S  ,                                //D1
+MM_D02BF , DPUE , PUE_D02  , DHCD02, DVCD02, D2TX,  //D2
+MM_D03CD , DSQ  , QV_D03  , QP_D03  , DSQ   ,        //D3
+MM_D04CD , DPUE , PUE_D04  , D2LX  ,                //D4
+MM_D05AF , D2H  ,  D05EIPM, D2H   ,                  //D5
+MM_D06AF , D2L  ,                                //D6
+MM_D07CD , qshres_D07,  DD07_1, SXV_D07    ,                //D7
+MM_D08CD , DPUE , PUE_D08  , DHCD08, DVCD08, D2TX,  //D8
+MM_D09BF , D2S  ,                                //D9
+//D10BF, SSD10, DSG10 ,                        &!D10
+MM_D10BF, D10  , D10,                           //old D10
+MM_D11BD, D2S  ,                                //D11
+MM_D12BD, DPUE , PUE_D12 , DHCD12, DVCD12, D2TX,  //D12
+MM_D13CF, DSS  , SXH_D13   , DSS   ,                //D13
+MM_D14CF, DPUE , PUE_D14 , D2LX  ,                //D14
+MM_D15AD, D2H  , D15EIPM, D2H   ,                        //D15
+MM_D16AD, D2L  ,                                //D16
+MM_D17CF, DSQ  , QH_D17  , QS_D17  , DSQ   ,        //D17
+MM_D18CF, DPUE , PUE_D18 , DHCD18, DVCD18, D2TX,  //D18
+MM_D19BD, D2S  ,                                //D19
+//D20BD, SSD20  , DSG10)                        !D20
+MM_D20BD, D10  , D10)                           ; //old D20
+
+SUPERE:   LINE:= (                           
+MM_E01BF , D2S  ,                                //E1
+MM_E02BF , DPUE , PUE_E02  , DHCE02, DVCE02, D2TX,  //E2
+MM_E03CD , DSQ  , QV_E03  , QP_E03  , DSQ   ,        //E3
+MM_E04CD , DPUE , PUE_E04  , D2LX  ,                //E4
+MM_E05AF , DSS  , SXDP_E05  , DSS   ,                //E5
+MM_E06AF , D2L  ,                                //E6
+MM_E07CD , DSS  , SXV_E07   , DSS   ,                //E7
+MM_E08CD , DPUE , PUE_E08  , DHCE08, DVCE08, D2TX,  //E8
+MM_E09BF , D2S  ,                                //E9
+MM_E10BF, SSE10, DSG10 ,                        //E10
+//E10BF,D10,D10,                              &!old E10
+MM_E11BD, D2S  ,                                //E11
+MM_E12BD, DPUE , PUE_E12 , DHCE12, DVCE12, D2TX,  //E12
+MM_E13CF, DSS  , SXH_E13   , DSS   ,                //E13
+MM_E14CF, DPUE , PUE_E14 , D2LX  ,                //E14
+MM_E15AD, D2H  , E15IPM, D2H   ,                //E15
+MM_E16AD, D2L  ,                                //E16
+MM_E17CF, DSQ  , QH_E17  , QGTR1e , DSQ   ,        //E17
+MM_E18CF, DPUE , PUE_E18 , DHCE18, DVCE18, D2TX,  //E18
+MM_E19BD, D2S  ,                                //E19
+MM_E20BD, SSE20, DSG10)                          ; //E20
+//E20BD,D10,D10)!old E20
+
+wsnk_mark : marker;
+
+SUPEREnk:   LINE:= (                         
+MM_E01BF , D2S  ,                                //E1
+MM_E02BF , DPUE , PUE_E02  , DHCE02, DVCE02, D2TX,  //E2
+MM_E03CD , DSQ  , QV_E03  , QP_E03  , DSQ   ,        //E3
+MM_E04CD , DPUE , PUE_E04  , D2LX  ,                //E4
+MM_E05AF ,  qshres_E05, DE05_1, SXDP_E05    ,                //E5
+MM_E06AF , D2L  ,                                //E6
+MM_E07CD , DSS  , SXV_E07   , DSS   ,                //E7
+MM_E08CD , DPUE , PUE_E08  , DHCE08, DVCE08, D2TX,  //E8
+MM_E09BF , D2S  ,                                //E9
+//E10BF, SSE10, DSG10 ,                        &!E10
+MM_E10BF,D10,D10,                              //old E10
+MM_E11BD, D2S  ,                                //E11
+MM_E12BD, DPUE , PUE_E12 , DHCE12, DVCE12, D2TX,  //E12
+MM_E13CF, DSS  , SXH_E13   , DSS   ,                //E13
+MM_E14CF, DPUE , PUE_E14 , D2LX  ,                //E14
+MM_E15AD, D2H  ,E15IPM,  D2H   ,                        //E15
+MM_E16AD, D2L  ,                                //E16
+MM_E17CF, DSQ  , QH_E17  ,D7cm, QGTR1e , DSQm7   ,        //E17
+MM_E18CF, DPUE , PUE_E18 , DHCE18, DVCE18, D2TX,  //E18
+MM_E19BD, D2SX, QThin_E19  , D2SX,
+MM_E20BD,D10SKH, WSNK,wsnk_mark,D10SKH); 
+
+SUPERE_MAT:   LINE:= (                         
+MM_E01BF , D2S  ,                                //E1
+MM_E02BF , DPUE , PUE_E02  , DHCE02, DVCE02, D2TX,  //E2
+MM_E03CD , DSQ  , QV_E03  , QP_E03  , DSQ   ,        //E3
+MM_E04CD , DPUE , PUE_E04  , D2LX  ,                //E4
+MM_E05AF , DSS  , SXDP_E05  , DSS   ,                //E5
+MM_E06AF , D2L  ,                                //E6
+MM_E07CD , DSS  , SXV_E07   , DSS   ,                //E7
+MM_E08CD , DPUE , PUE_E08  , DHCE08, DVCE08, D2TX,  //E8
+MM_E09BF , D2S  ,                                //E9
+//E10BF, SSE10, DSG10 ,                        &!E10
+MM_E10BF,D10,D10,                              //old E10
+MM_E11BD, D2S  ,                                //E11
+MM_E12BD, DPUE , PUE_E12 , DHCE12, DVCE12, D2TX,  //E12
+MM_E13CF, DSS  , SXH_E13   , DSS   ,                //E13
+MM_E14CF, DPUE , PUE_E14 , D2LX  ,                //E14
+MM_E15AD, D2H  ,E15IPM,  D2H   ,                        //E15
+MM_E16AD, D2L  ,                                //E16
+MM_E17CF, DSQ  , QH_E17  ,D7cm, QGTR1e , DSQm7   ,        //E17
+MM_E18CF, DPUE , PUE_E18 , DHCE18, DVCE18, D2TX,  //E18
+MM_E19BD, D2SX, QThin_E19  , D2SX,                                //E19
+//E20BD, SSE20, DSG10)                          !E20
+MM_E20BD,D10SKH, WSNK_MAT,D10SKH); //old E20
+
+
+
+F13MIDDLE: MARKER;
+
+SUPERF:   LINE:= (                           
+MM_F01BF , D2SX  , QThin_F01, D2SX,                                //F1
+MM_F02BF , DPUE , PUE_F02  , DHCF02, DVCF02, D2TX,  //F2
+MM_F03CD , DSQ  , QV_F03  , QP_F03  , DSQ   ,        //F3
+MM_F04CD , DPUE , PUE_F04  , D2LX  ,                //F4
+MM_F05AF , DSF05, SSF05,                         //F5
+//F5AF , D2H  , D2H   ,                        &!F5
+MM_F06AF , D2L  ,                                //F6
+MM_F07CD , DSS  , SXV_F07   , DSS   ,                //F7
+MM_F08CD , DPUE , PUE_F08  , DHCF08, DVCF08, D2TX,  //F8
+MM_F09BF , D2S  ,                                //F9
+MM_F10BF, SSF10, DSF10,                         //F10
+//F10BF, D10  , D10   ,                        &!F10
+MM_F11BD, D2S  ,                                //F11
+MM_F12BD, DPUE , PUE_F12 , DHCF12, DVCF12, D2TX,  //F12
+MM_F13CF, DSS  , SXH_F13, DSS   , //F13
+MM_F14CF, DPUE , PUE_F14 , D2LX  ,                //F14
+MM_F15AD, D2H  , D2H   ,                        //F15
+MM_F16AD, D2L  ,                                //F16
+MM_F17CF, DSQ  , QH_F17  , QS_F17  , DSQ   ,        //F17
+MM_F18CF, DPUE , PUE_F18 , DHCF18, DVCF18, D2TX,  //F18
+MM_F19BD, D2S  ,                                //F19
+MM_F20BD, SSF20, DSF20 , WB_PUE_F20)                ; //F20
+//F20BD, D10  , D10   , PUE_F20)               !old F20
+
+SUPERFnk:   LINE:= (                         
+MM_F01BF , D2SX  , QThin_F01,D2SX,                               //F1
+MM_F02BF , DPUE , PUE_F02  , DHCF02, DVCF02, D2TX,  //F2
+MM_F03CD , DSQ  , QV_F03  , QP_F03  , DSQ   ,        //F3
+MM_F04CD , DPUE , PUE_F04  , D2LX  ,                //F4
+MM_F05AF , D2H  , D2H   ,                        //F5
+MM_F06AF , D2L  ,                                //F6
+MM_F07CD , qshres_F07, DF07_1, SXV_F07  ,        //F7
+MM_F08CD , DPUE , PUE_F08  , DHCF08, DVCF08, D2TX,  //F8
+MM_F09BF , D2S  ,                                //F9
+MM_F10BF, D10  , D10   ,                        //F10
+MM_F11BD, D2S  ,                                //F11
+MM_F12BD, DPUE , PUE_F12 , DHCF12, DVCF12, D2TX,  //F12
+MM_F13CF, DSS  , SXH_F13, DSS   ,                //F13
+MM_F14CF, DPUE , PUE_F14 , D2LX  ,                //F14
+MM_F15AD, D2H  , D2H   ,                        //F15
+MM_F16AD, D2L  ,                                //F16
+MM_F17CF, DSQ  , QH_F17  , QS_F17  , DSQ   ,        //F17
+MM_F18CF, DPUE , PUE_F18 , DHCF18, DVCF18, D2TX,  //F18
+MM_F19BD, D2S  ,                                //F19
+//F20BD, SSF20, DSG10 , PUE_F20)                !F20
+MM_F20BD, DF20_1  ,qshres_F20, TUNEMETER_PUE, DF20_2  , WB_PUE_F20)               ; 
+
+//------------------------------------------------------------
+// SUPERF broken up with SEB equipement included
+
+SUPERF1:   LINE:= (                          
+MM_F01BF , D2S  ,                                //F1
+MM_F02BF , DPUE , PUE_F02  , DVCF02, D2TX  ,        //F2
+MM_F03CD , DSQ  , QV_F03  , QP_F03  , DSQ   ,        //F3
+MM_F04CD , DPUE , PUE_F04  , D2LX  ,                //F4
+MM_F05AF , DSF05) 			              ; // to us face of F5 septum magnet
+
+SUPERF2:   LINE:= (                          
+SSF05, MM_F06AF , D2L   ,                        //F6
+MM_F07CD , DSS  , SXV_F07   , DSS   ,                //F7
+MM_F08CD , DPUE , PUE_F08  , DVCF08, D2TX  ,        //F8
+MM_F09BF , D2S  ,                                //F9
+MM_F10BF, SSF10)                                 ; // to end of F10 septum magnet
+
+SUPERF3:   LINE:= (                          
+DSF10, MM_F11BD, D2S   ,                        //F11
+MM_F12BD, DPUE , PUE_F12 , DVCF12, D2TX  ,        //F12
+MM_F13CF, DSS  , SXH_F13, DSS   ,                //F13
+MM_F14CF, DPUE , PUE_F14 , D2LX  ,                //F14
+MM_F15AD, D2H  , D2H   ,                        //F15
+MM_F16AD, D2LH,  F16MID, D2LH,                                //F16
+MM_F17CF, DSQ  , F17MID, QH_F17  , QS_F17  , DSQ   ,        //F17
+MM_F18CF, DPUE , F18MID, PUE_F18 , DVCF18, D2TX  ,        //F18
+MM_F19BD, D2SH,  F19MID, D2SH,                               //F19
+MM_F20BD, SSF20, DSF20 , PUE_F20)                ; //F20
+//F20BD, D10  , F20MID, D10)                            !F20
+//F20BD, SSF20, DSG10 , PUE_F20)                !F20
+
+// Notes:  K. Brown (8/31/98)
+// a special F13 magnet for just f5 to f13 tracking, since the
+// beam is outside the magnet (gradient changes sign).
+//
+// It does a fair job predicting the orbit but nonlinearities are
+// such a mess that the field maps are the right thing to use.
+//
+//   normal CF type magnet.
+//CF: RBEND,L := LENC,ANGLE := ANGC,K1 := K1CF,K2 := K2CF!,Aperx=.07296,Apery=.04088
+//  modified to match trajectory seen in Beam
+//MF13CF: RBEND,L := LENC,ANGLE := ANGC,K1 := -K1CF,K2 := K2CF!,Aperx=.07296,Apery=.04088
+MF13CF: RBEND,L := LENC,ANGLE := ANGC,K1 := -0.2*K1CF,K2 := -1.0*K2CF;
+MF12BD: RBEND,L := LENB,ANGLE := ANGB,K1 := 1.7*K1BD,K2 := 5.0*K2BD;
+MF11BD: RBEND,L := LENB,ANGLE := ANGB,K1 := 1.0*K1BD,K2 := 1.0*K2BD;
+/*
+DRIFT, SW01, L := 1.02235;
+DRIFT, SW02, L := 1.02235;
+DRIFT, SW03, L := 1.02235;
+DRIFT, SW04, L := 1.02235;
+*/
+
+SectF5F13: LINE:= (SUPERF2, 
+DSF10,MMM_F11BD,D2S,//F11
+MMM_F12BD,DPUE,PUE_F12,DVCF12,D2TX,//F12
+MMM_F13CF,DSS, SXH_F13)            ; //F13
+//F13CF, DSS  , SXH_F13, DSS   , &!F13
+//MF13CF,DSS, SW01, SW02, SW03, SW04)	!F13 to CD1
+
+//------------------------------------------------------------
+
+SUPERG:   LINE:= (                              
+MM_G01BF , D2S  ,                              //G1
+MM_G02BF , DPUE , G2MID, PUE_G02 , DHCG02, DVCG02, D2TX, //G2
+MM_G03CD , DSQ  , G3MID, QV_G03 , QP_G03  , DSQ   ,       //G3
+MM_G04CD , DPUE , G4MID, PUE_G04 , D2LX  ,               //G4
+MM_G05AF , D2H  , G5MID, D2H  ,                       //G5
+MM_G06AF , D2LH,  G6MID, D2LH ,                              //G6
+MM_G07CD , DSS  , G7MID, SXV_G07  , DSS   ,               //G7
+MM_G08CD , DPUE , PUE_G08 , DHCG08, DVCG08, D2TX, //G8
+MM_G09BF , D2S  ,                              //G9
+MM_G10BF, SSG10, DSG10,                       //G10
+//G10BF,D10,D10,&!old G10
+MM_G11BD, D2S  ,                              //G11
+MM_G12BD, DPUE , PUE_G12, DHCG12, DVCG12, D2TX, //G12
+MM_G13CF, DSS  , SXH_G13  , DSS   ,               //G13
+MM_G14CF, DPUE , PUE_G14, D2LX  ,               //G14
+MM_G15AD, D2H  , D2H  ,                       //G15
+MM_G16AD, D2L  ,                              //G16
+MM_G17CF, DSQ  , QH_G17 , QGTR2g , DSQ   ,       //G17
+MM_G18CF, DPUE , PUE_G18, DHCG18, DVCG18, D2TX, //G18
+MM_G19BD, D2S  ,                              //G19
+MM_G20BD, DSG20, SSG20)                          ; //G20
+//G20BD, SSG20  , DSG10)                          !G20
+
+SUPERGnk:   LINE:= (                            
+MM_G01BF , D2S  ,                              //G1
+MM_G02BF , DPUE , PUE_G02 , DHCG02, DVCG02, D2TX, //G2
+MM_G03CD , DSQ  , QV_G03 , QP_G03  , DSQ   ,       //G3
+MM_G04CD , DPUE , PUE_G04 , D2LX  ,               //G4
+MM_G05AF , D2H  , D2H  ,                       //G5
+MM_G06AF , D2L  ,                              //G6
+MM_G07CD , DSS  , SXV_G07  , DSS   ,               //G7
+MM_G08CD , DPUE , PUE_G08 , DHCG08, DVCG08, D2TX, //G8
+MM_G09BF , D2S  ,                              //G9
+MM_G10BF, SSG10,DSG10,                         //G10 w/kick
+//MM_G10BF, D10  , D10  ,                       &!G10
+MM_G11BD, D2S  ,                              //G11
+MM_G12BD, DPUE , PUE_G12, DHCG12, DVCG12, D2TX, //G12
+MM_G13CF, DSS  , SXH_G13  , DSS   ,               //G13
+MM_G14CF, DPUE , PUE_G14, D2LX  ,               //G14
+MM_G15AD, D2H  , D2H  ,                       //G15
+MM_G16AD, D2L  ,                              //G16
+MM_G17CF, DSQ  , QH_G17 , QGTR2g , DSQ   ,       //G17
+MM_G18CF, DPUE , PUE_G18, DHCG18, DVCG18, D2TX, //G18
+MM_G19BD, D2S  ,                              //G19
+MM_G20BD, DG20_1, qshres_G20, DG20_2, SSG20)                          ; //G20
+//G20BD, D10  , D10)                          !G20
+//G10Marker, SMG10)
+SSG10:   Line:= (DSG10, G10Marker, SMG10); // DSG10 + SMG10 + DSG10:= G10 straight section
+
+G10toH10: Line:=(
+G10Marker, SMG10,DSG10, //
+MM_G11BD, D2S  ,                              //G11
+MM_G12BD, DPUE , PUE_G12, DHCG12, DVCG12, D2TX, //G12
+MM_G13CF, DSS  , SXH_G13  , DSS   ,               //G13
+MM_G14CF, DPUE , PUE_G14, D2LX  ,               //G14
+MM_G15AD, D2H  , D2H  ,                       //G15
+MM_G16AD, D2L  ,                              //G16
+MM_G17CF, DSQ  , QH_G17 , QGTR2g , DSQ   ,       //G17
+MM_G18CF, DPUE , PUE_G18, DHCG18, DVCG18, D2TX, //G18
+MM_G19BD, D2S  ,                              //G19
+MM_G20BD, DSG20, SSG20,  //
+MM_H01BF , D2S   ,                                  //H1
+MM_H02BF , DPUE  , PUE_H02, DHCH02, DVCH02, D2TX,      //H2
+MM_H03CD , DSQ   , QV_H03, QP_H03  , DSQ   ,            //H3
+MM_H04CD , DPUE  , PUE_H04, D2LX  ,                    //H4
+MM_H05AF , DSS, SXDN_H05, DSS   ,                    //H5
+MM_H06AF , D2L   ,                                  //H6
+MM_H07CD , DSS   , SXV_H07 , DSS   ,                    //H7
+MM_H08CD , DPUE  , PUE_H08, DHCH08, DVCH08, D2TX,      //H8
+MM_H09BF , D2S   ,                                  //H9
+MM_H10BF,D10);
+
+
+SUPERH:   LINE:= (                              
+MM_H01BF , D2S   ,                                  //H1
+MM_H02BF , DPUE  , PUE_H02, DHCH02, DVCH02, D2TX,      //H2
+MM_H03CD , DSQ   , QV_H03, QP_H03  , DSQ   ,            //H3
+MM_H04CD , DPUE  , PUE_H04, D2LX  ,                    //H4
+MM_H05AF , DSS   , SXDN_H05, DSS   ,                    //H5
+MM_H06AF , D2L   ,                                  //H6
+MM_H07CD , DSS   , SXV_H07 , DSS   ,                    //H7
+MM_H08CD , DPUE  , PUE_H08, DHCH08, DVCH08, D2TX,      //H8
+MM_H09BF , D2S   ,                                  //H9
+MM_H10BF, D10   , D10 ,                            //H10
+MM_H11BD, D2S   ,                                  //H11
+MM_H12BD, DPUE  , PUE_H12, DHCH12, DVCH12, D2TX,     //H12
+MM_H13CF, DSS   , SXH_H13  , DSS   ,                   //H13
+MM_H14CF, DPUE  , PUE_H14, D2LX  ,                   //H14
+MM_H15AD, D2H   , D2H  ,                           //H15
+MM_H16AD, D2L   ,                                  //H16
+MM_H17CF, DSQ   , QH_H17 , QS_H17  , DSQ   ,           //H17
+MM_H18CF, DPUE  , PUE_H18, DHCH18, DVCH18, D2TX,     //H18
+MM_H19BD, D2S   ,                                  //H19
+MM_H20BD, SSH20f, DSG10)                            ; //H20
+// old H20
+//H20BD,D10,D10)!H20
+
+SUPERHnk:   LINE:= (                              
+MM_H01BF , D2S   ,                                  //H1
+MM_H02BF , DPUE  , PUE_H02, DHCH02, DVCH02, D2TX,      //H2
+MM_H03CD , DSQ   , QV_H03, QP_H03  , DSQ   ,            //H3
+MM_H04CD , DPUE  , PUE_H04, D2LX  ,                    //H4
+MM_H05AF , qshres_H05, DH05_1, SXDN_H05 ,                    //H5
+MM_H06AF , D2LH  , H6MID, D2LH,                            //H6
+MM_H07CD , DSS   , H7MID, SXV_H07 , DSS   ,                    //H7
+MM_H08CD , DPUE  , H8MID, PUE_H08, DHCH08, DVCH08, D2TX,      //H8
+MM_H09BF , D2SH  , H9MID, D2SH,                            //H9
+MM_H10BF, D10   , H10MID, D10,                            //H10
+MM_H11BD, D2S   ,                                  //H11
+MM_H12BD, DPUE  , PUE_H12, DHCH12, DVCH12, D2TX,     //H12
+MM_H13CF, DSS   , SXH_H13  , DSS   ,                   //H13
+MM_H14CF, DPUE  , PUE_H14, D2LX  ,                   //H14
+MM_H15AD, D2H   , D2H  ,                           //H15
+MM_H16AD, D2L   ,                                  //H16
+MM_H17CF, DSQ   , QH_H17 , QS_H17  , DSQ   ,           //H17
+MM_H18CF, DPUE  , PUE_H18, DHCH18, DVCH18, D2TX,     //H18
+MM_H19BD, D2S   ,                                  //H19
+//H20BD, SSH20f, DSG10)                            !H20
+// old H20
+MM_H20BD,qshres_H20,DH20_1,DH20_2); //H20
+
+//------------------------------------------------------------
+// SUPERH broken up to include H20ES.  
+//   K.Brown (8/31/98)
+
+SUPERH1:   LINE:= (                             
+MM_H01BF , D2S  ,                                   //H1
+MM_H02BF , DPUE , PUE_H02 , DVCH02, D2TX,              //H2
+MM_H03CD , DSQ  , QV_H03 , QP_H03  , DSQ ,              //H3
+MM_H04CD , DPUE , PUE_H04 , D2LX  ,                    //H4
+MM_H05AF , DSS   , H5MID, SXDN_H05, DSS   ,                    //H5
+MM_H06AF , D2LH  , H6MID, D2LH,                            //H6
+MM_H07CD , DSS   , H7MID, SXV_H07 , DSS   ,                    //H7
+MM_H08CD , DPUE  , H8MID, PUE_H08, DHCH08, DVCH08, D2TX,      //H8
+MM_H09BF , D2SH  , H9MID, D2SH,                            //H9
+//H10BF, D10   , H10MID, D10,                            &!H10
+MM_H10BF, SSH10,                            //H10
+MM_H11BD, D2S  ,                                   //H11
+MM_H12BD, DPUE , PUE_H12, DVCH12, D2TX,              //H12
+MM_H13CF, DSS  , SXH_H13  , DSS   ,                    //H13
+MM_H14CF, DPUE , PUE_H14, D2LX  ,                    //H14
+MM_H15AD, D2H  , D2H  ,                            //H15
+MM_H16AD, D2L  ,                                   //H16
+MM_H17CF, DSQ  , QH_H17 , QS_H17  , DSQ ,              //H17
+MM_H18CF, DPUE , PUE_H18, DVCH18, D2TX,              //H18
+MM_H19BD, D2S  ,                                   //H19
+MM_H20BD, DSH20)                         ; //H19 to upstream face of H20 septum
+
+SUPERH2:   LINE:= (SSH20)	                 ; //H20
+
+//------------------------------------------------------------
+
+SUPERI:   LINE:= (                              
+MM_I01BF , D2S  ,                                   //I1
+MM_I02BF , DPUE , PUE_I02 , DHCI02, DVCI02, D2TX,      //I2
+MM_I03CD , DSQ  , QV_I03 , QP_I03  , DSQ   ,            //I3
+MM_I04CD , DPUE , PUE_I04 , D2LX  ,                    //I4
+MM_I05AF , D2H  , D2H  ,                            //I5
+MM_I06AF , D2L  ,                                   //I6
+MM_I07CD , DSS  , SXV_I07  , DSS,                       //I7
+MM_I08CD , DPUE , PUE_I08 , DHCI08, DVCI08, D2TX,      //I8
+MM_I09BF , D2S  ,                                   //I9
+MM_I10BF, SSI10, DSG10,                            //I10
+//I10BF,D10,D10,                                 &!I10 old I10
+MM_I11BD, D2S  ,                                   //I11
+MM_I12BD, DPUE , PUE_I12, DHCI12, DVCI12, D2TX,      //I12
+MM_I13CF, DSS  , SXH_I13  , DSS   ,                    //I13
+MM_I14CF, DPUE , PUE_I14, D2LX  ,                    //I14
+MM_I15AD, D2H  , D2H  ,                            //I15
+MM_I16AD, D2L  ,                                   //I16
+MM_I17CF, DSQ  , QH_I17 , QGTR1i , DSQ   ,            //I17
+MM_I18CF, DPUE , PUE_I18, DHCI18, DVCI18, D2TX,      //I18
+MM_I19BD, D2S  ,                                   //I19
+MM_I20BD, SSI20  , DSG10)                               ; //I20
+
+SUPERInk:   LINE:= (                              
+MM_I01BF , D2S  ,                                   //I1
+MM_I02BF , DPUE , PUE_I02 , DHCI02, DVCI02, D2TX,      //I2
+MM_I03CD , DSQ  , QV_I03 , QP_I03  , DSQ   ,            //I3
+MM_I04CD , DPUE , PUE_I04 , D2LX  ,                    //I4
+MM_I05AF , D2H_NuJ  ,QJump_I05, D2H_NuJ  ,                            //I5
+MM_I06AF , D2L  ,                                   //I6
+MM_I07CD , qshres_I07, DI07_1, SXV_I07  ,                       //I7
+MM_I08CD , DPUE , PUE_I08 , DHCI08, DVCI08, D2TX,      //I8
+MM_I09BF , D2S  ,                                   //I9
+//I10BF, SSI10, DSG10,                            &!I10
+MM_I10BF,D10,D10,                                 //I10 old I10
+MM_I11BD, D2S  ,                                   //I11
+MM_I12BD, DPUE , PUE_I12, DHCI12, DVCI12, D2TX,      //I12
+MM_I13CF, DSS  , SXH_I13  , DSS   ,                    //I13
+MM_I14CF, DPUE , PUE_I14, D2LX  ,                    //I14
+MM_I15AD, D2H  , D2H  ,                            //I15
+MM_I16AD, D2L  ,                                   //I16
+MM_I17CF, DSQ  , QH_I17 , QGTR1i , DSQ   ,            //I17
+MM_I18CF, DPUE , PUE_I18, DHCI18, DVCI18, D2TX,      //I18
+MM_I19BD, D2S  ,                                   //I19
+MM_I20BD, D10  , D10)                               ; //I20
+
+SUPERJ:   LINE:= (                              
+MM_J01BF , D2S  ,                                   //J1
+MM_J02BF , DPUE , PUE_J02   , DHCJ02, DVCJ02, D2TX,    //J2
+MM_J03CD , DSQ  , QV_J03   , QP_J03  , DSQ   ,          //J3
+MM_J04CD , DPUE , PUE_J04   , D2LX  ,                  //J4
+MM_J05AF , D2H, D2H   ,                          //J5
+MM_J06AF , D2L  ,                                   //J6
+MM_J07CD , DSS  , SXV_J07    , DSS   ,                  //J7
+MM_J08CD , DPUE , PUE_J08   , DHCJ08, DVCJ08, D2TX,    //J8
+MM_J09BF , D2S  ,                                   //J9
+MM_J10BF, SSJ10  , J10DUMP, DSG10   ,                  //J10
+MM_J11BD, D2S  ,                                   //J11
+MM_J12BD, DPUE , PUE_J12  , DHCJ12, DVCJ12, D2TX,    //J12
+MM_J13CF, DSS  , SXH_J13    , DSS   ,                  //J13
+MM_J14CF, DPUE , PUE_J14  , D2LX  ,                  //J14
+MM_J15AD, D2H  , D2H    ,                          //J15
+MM_J16AD, D2L  ,                                   //J16
+MM_J17CF, DSQ  , QH_J17   , QS_J17  , DSQ   ,          //J17
+MM_J18CF, DPUE , PUE_J18  , DHCJ18, DVCJ18, D2TX,    //J18
+MM_J19BD, D2S  ,                                   //J19
+MM_J20BD, SSJ20, DSG10)                             ; //J20
+// old J20
+//J20BD,D10,D10)!J20
+
+SUPERJnk:   LINE:= (                              
+MM_J01BF , D2S  ,                                   //J1
+MM_J02BF , DPUE , PUE_J02   , DHCJ02, DVCJ02, D2TX,    //J2
+MM_J03CD , DSQ  , QV_J03   , QP_J03  , DSQ   ,          //J3
+MM_J04CD , DPUE , PUE_J04   , D2LX  ,                  //J4
+MM_J05AF , D2H_NuJ  ,QJump_J05, D2H_NuJ    ,                          //J5
+MM_J06AF , D2L  ,                                   //J6
+MM_J07CD , DSS  , SXV_J07    , DSS   ,                  //J7
+MM_J08CD , DPUE , PUE_J08   , DHCJ08, DVCJ08, D2TX,    //J8
+MM_J09BF , D2S  ,                                   //J9
+MM_J10BF, D10  , J10DUMP, D10   ,                  //J10
+MM_J11BD, D2S  ,                                   //J11
+MM_J12BD, DPUE , PUE_J12  , DHCJ12, DVCJ12, D2TX,    //J12
+MM_J13CF, DSS  , SXH_J13    , DSS   ,                  //J13
+MM_J14CF, DPUE , PUE_J14  , D2LX  ,                  //J14
+MM_J15AD, D2H  , D2H    ,                          //J15
+MM_J16AD, D2L  ,                                   //J16
+MM_J17CF, DSQ  , QH_J17   , QS_J17  , DSQ   ,          //J17
+MM_J18CF, DPUE , PUE_J18  , DHCJ18, DVCJ18, D2TX,    //J18
+MM_J19BD, D2S  ,                                   //J19
+//J20BD, SSJ20, DSG10)                             !J20
+// old J20
+MM_J20BD,D10,D10); //J20
+
+SUPERK:   LINE:= (                              
+MM_K01BF, D2S ,                                    //K1
+MM_K02BF, DPUE, PUE_K02, DHCK02, DVCK02, D2TX,        //K2
+MM_K03CD , DSQ , QV_K03, QP_K03  , DSQ   ,              //K3
+MM_K04CD , DPUE, PUE_K04, D2LX  ,                      //K4
+MM_K05AF , DSS , SXDP_K05, DSS   ,                      //K5
+MM_K06AF , D2L ,                                    //K6
+MM_K07CD , DSS , SXV_K07 , DSS   ,                      //K7
+MM_K08CD , DPUE, PUE_K08, DHCK08, DVCK08, D2TX,        //K8
+MM_K09BF , D2S ,                                    //K9
+MM_K10BF, SSK10 , DSG10 ,                              //K10
+MM_K11BD, D2S ,                                    //K11
+MM_K12BD, DPUE, PUE_K12, DHCK12, DVCK12, D2TX,       //K12
+MM_K13CF, DSS , SXH_K13  , DSS   ,                     //K13
+MM_K14CF, DPUE, PUE_K14, D2LX  ,                     //K14
+MM_K15AD, D2H , D2H  ,                             //K15
+MM_K16AD, D2L ,                                    //K16
+MM_K17CF, DSQ , QH_K17 , QGTR2k , DSQ   ,             //K17
+MM_K18CF, DPUE, PUE_K18, DHCK18, DVCK18, D2TX,       //K18
+MM_K19BD, D2S ,                                    //K19
+MM_K20BD, SSK20 , DSG10)                                ; //K20
+
+SUPERKnk:   LINE:= (                              
+MM_K01BF, D2S ,                                    //K1
+MM_K02BF, DPUE, PUE_K02, DHCK02, DVCK02, D2TX,        //K2
+MM_K03CD , DSQ , QV_K03, QP_K03  , DSQ   ,              //K3
+MM_K04CD , DPUE, PUE_K04, D2LX  ,                      //K4
+MM_K05AF , qshres_K05,DK05_1, SXDP_K05,                       //K5
+MM_K06AF , D2L ,                                    //K6
+MM_K07CD , qshres_K07,DK07_1, SXV_K07    ,                      //K7
+MM_K08CD , DPUE, PUE_K08, DHCK08, DVCK08, D2TX,        //K8
+MM_K09BF , D2S ,                                    //K9
+MM_K10BF, D10 , D10 ,                              //K10
+MM_K11BD, D2S ,                                    //K11
+MM_K12BD, DPUE, PUE_K12, DHCK12, DVCK12, D2TX,       //K12
+MM_K13CF, DSS , SXH_K13  , DSS   ,                     //K13
+MM_K14CF, DPUE, PUE_K14, D2LX  ,                     //K14
+MM_K15AD, qshres_K15, DK15_1 , DK15_2  ,                             //K15
+MM_K16AD, D2L ,                                    //K16
+MM_K17CF, DSQ , QH_K17 , QGTR2k , DSQ   ,             //K17
+MM_K18CF, DPUE, PUE_K18, DHCK18, DVCK18, D2TX,       //K18
+MM_K19BD, D2S ,                                    //K19
+MM_K20BD, D10 , D10)                                ; //K20
+
+SUPERL:   LINE:= (                              
+MM_L01BF , D2S  ,                                   //L1
+MM_L02BF , DPUE , PUE_L02_ , DHCL02, DVCL02, D2TX,      //L2
+MM_L03CD , DSQ  , QV_L03 , QP_L03  , DSQ   ,            //L3
+MM_L04CD , DPUE , PUE_L04 , D2LX  ,                    //L4
+MM_L05AF , D2H  , D2H  ,                            //L5
+MM_L06AF , D2L  ,                                   //L6
+MM_L07CD , DSS  , SXV_L07  , DSS   ,                    //L7
+MM_L08CD , DPUE , PUE_L08 , DHCL08, DVCL08, D2TX,      //L8
+MM_L09BF , D2S  ,                                   //L9
+MM_L10BF, SSL10, DSG10,                            //L10
+//L10BF,D10,D10,                                 &! old L10
+MM_L11BD, D2S  ,                                   //L11
+MM_L12BD, DPUE , PUE_L12, DHCL12, DVCL12, D2TX,      //L12
+MM_L13CF, DSS  , SXH_L13  , DSS   ,                    //L13
+MM_L14CF, DPUE , PUE_L14, D2LX  ,                    //L14
+MM_L15AD, D2H  , D2H  ,                            //L15
+MM_L16AD, D2L  ,                                   //L16
+MM_L17CF, DSQ  , QH_L17 , QS_L17  , DSQ   ,            //L17
+MM_L18CF, DPUE , PUE_L18, DHCL18, DVCL18, D2TX,      //L18
+MM_L19BD, D2S  ,                                   //L19
+//L20BD, D10  , D10)                               !L20
+MM_L20BD, SSL20, DSG10)                               ; //L20
+
+SUPERLnk:   LINE:= (                              
+MM_L01BF , D2S  ,                                   //L1
+MM_L02BF , DPUE , PUE_L02 , DHCL02, DVCL02, D2TX,      //L2
+MM_L03CD , DSQ  , QV_L03 , QP_L03  , DSQ   ,            //L3
+MM_L04CD , DPUE , PUE_L04 , D2LX  ,                    //L4
+MM_L05AF , D2H  , D2H  ,                            //L5
+MM_L06AF , D2L  ,                                   //L6
+MM_L07CD , DSS  , SXV_L07  , DSS   ,                    //L7
+MM_L08CD , DPUE , PUE_L08 , DHCL08, DVCL08, D2TX,      //L8
+MM_L09BF , D2S  ,                                   //L9
+//L10BF, SSL10, DSG10,                            &!L10
+MM_L10BF,D10,D10,                                 // old L10
+MM_L11BD, D2S  ,                                   //L11
+MM_L12BD, DPUE , PUE_L12, DHCL12, DVCL12, D2TX,      //L12
+MM_L13CF, DSS  , SXH_L13  , DSS   ,                    //L13
+MM_L14CF, DPUE , PUE_L14, D2LX  ,                    //L14
+MM_L15AD, D2H  , D2H  ,                            //L15
+MM_L16AD, D2L  ,                                   //L16
+MM_L17CF, DSQ  , QH_L17 , QS_L17  , DSQ   ,            //L17
+MM_L18CF, DPUE , PUE_L18, DHCL18, DVCL18, D2TX,      //L18
+MM_L19BD, D2S  ,                                   //L19
+MM_L20BD, D10  , D10)                               ; //L20
+
+SUPERLNM:   LINE:= (                              
+MM_L01BF , D2S  ,                                   //L1
+MM_L02BF , DPUE , PUE_L02 , DHCL02, DVCL02, D2TX,      //L2
+MM_L03CD , DSQ  , QV_L03 , QP_L03  , DSQ   ,            //L3
+MM_L04CD , DPUE , PUE_L04 , D2LX  ,                    //L4
+MM_L05AF , D2H  , D2H  ,                            //L5
+MM_L06AF , D2L  ,                                   //L6
+MM_L07CD , DSS  , SXV_L07  , DSS   ,                    //L7
+MM_L08CD , DPUE , PUE_L08 , DHCL08, DVCL08, D2TX,      //L8
+MM_L09BF , D2S  ,                                   //L9
+//L10BF, SSL10, DSG10,                            &!L10
+MM_L10BF,D10,D10,                                 // old L10
+MM_L11BD, D2S  ,                                   //L11
+MM_L12BD, DPUE , PUE_L12, DHCL12, DVCL12, D2TX,      //L12
+MM_L13CF, DSS  , SXH_L13  , DSS   ,                    //L13
+MM_L14CF, DPUE , PUE_L14, D2LX  ,                    //L14
+MM_L15AD, D2H  , D2H  ,                            //L15
+MM_L16AD, D2L  ,                                   //L16
+MM_L17CF, DSQ  , QH_L17 , QS_L17  , DSQ   ,            //L17
+MM_L18CF, DPUE , PUE_L18, DHCL18, DVCL18, D2TX,      //L18
+MM_L19BD, D2S  ,                                   //L19
+MM_L20BD, D10  )                               ; //L20
+
+//--------------------------------------------------------------------------
+// A simple AGS, no SEB equipment, FEB equipment, or injection equipement
+
+// AGS:   LINE:= (SUPERA, SUPERB, SUPERC, SUPERD, SUPERE, SUPERFnk, 
+//              SUPERG, SUPERH, SUPERI, SUPERJ, SUPERK, SUPERL);
+AGSp:   LINE:= (SUPERA, SUPERB, SUPERC, SUPERD, SUPERE, SUPERFnk, 
+               SUPERG, SUPERH, SUPERI, SUPERJ, SUPERK, SUPERL);
+
+
+
+// AGS with no 10' section kickers
+AGSnk:   LINE:= (SUPERAnk, SUPERBnk, SUPERCnk, SUPERDnk, SUPEREnk, SUPERFnk, 
+                 SUPERGnk, SUPERHnk, SUPERInk, SUPERJnk, SUPERKnk, SUPERLnk);
+
+
+//AGSnk:   LINE:= (SUPERGnk, SUPERHnk, SUPERInk, SUPERJnk, SUPERKnk, SUPERLnk,
+//                SUPERAnk, SUPERBnk, SUPERCnk, SUPERDnk, SUPEREnk, SUPERFnk);
+
+
+
+
+AGSNM:   LINE:= (SUPERANM, SUPERBnk, SUPERCnk, SUPERDnk, SUPEREnk, SUPERFnk, 
+                 SUPERGnk, SUPERHnk, SUPERInk, SUPERJnk, SUPERKnk, SUPERLNM);
+
+
+//--------------------------------------------------------------------------
+// A long AGS, from A super around and through up to G super
+
+LAGS:   LINE:= (AGS, SUPERAnk, SUPERBnk, SUPERCnk, SUPERDnk, 
+                SUPEREnk, SUPERF);
+
+LLAGS:   LINE:= (  AGS, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, 
+                  AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, 
+                  AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, 
+                  AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk, AGSnk);
+
+//--------------------------------------------------------------------------
+// Additional Lines, primarily used for SEB modeling - K. Brown (8/31/98)
+//
+// an AGS that starts at the US face of F5 septum magnet. For SEB  1/8/98 KAB
+// H20 not included. F5 and F10 are included.
+//--------------------------------------------------------------------------
+fAGS:   LINE:= (SUPERF2, SUPERF3, SUPERG, SUPERHnk, SUPERInk, SUPERJnk, 
+SUPERKnk, SUPERLnk, SUPERAnk, SUPERBnk, SUPERCnk, SUPERDnk, SUPEREnk, SUPERF1);
+
+fhAGS: LINE=(SUPERF2, SUPERF3, SUPERG, SUPERH1, SUPERH2, SUPERInk, SUPERJnk, 
+SUPERKnk, SUPERLnk, SUPERAnk, SUPERBnk, SUPERCnk, SUPERDnk, SUPEREnk, SUPERF1);
+
+// starts at E1
+//fAGS:   LINE:= (SUPEREnk, SUPERF, SUPERGnk, SUPERHnk, SUPERInk, SUPERJnk, &
+//SUPERKnk, SUPERLnk, SUPERAnk, SUPERBnk, SUPERCnk, SUPERDnk)
+
+//--------------------------------------------------------------------------
+// an AGS that starts at the US end of H20 septum magnet. For SEB  1/28/98 KAB
+//--------------------------------------------------------------------------
+hAGS:   LINE:= ( SUPERH2, SUPERI, SUPERJ, 
+                 SUPERK, SUPERL, SUPERA, SUPERB, SUPERC, SUPERD, SUPERE, 
+                 SUPERF1,SUPERF2, SUPERF3, SUPERG, SUPERH1);
+
+// This one starts at A super, but includes H20 septum, no F5 or F10
+
+ahAGS:   LINE:= (SUPERA, SUPERB, SUPERC, SUPERD, SUPERE, SUPERF, 
+                 SUPERG, SUPERH1, SUPERH2, SUPERI, SUPERJ, 
+                 SUPERK, SUPERL);
+
+//--------------------------------------------------------------------------
+// an AGS that starts at Super A but with elements For SEB  1/26/98 KAB
+// no H20, F5 and F10 included
+//--------------------------------------------------------------------------
+fpAGS:   LINE:= (SUPERA, SUPERB, SUPERC, SUPERD, SUPERE, SUPERF1, 
+SUPERF2, SUPERF3, SUPERG, SUPERH, SUPERI, SUPERJ,SUPERK, SUPERL);
+
+//--------------------------------------------------------------------------
+// An AGS that starts at the US end of H20 septum magnet.   This is 1 AGS
+// with an H20 followed by 1 AGS that has no H20, followed by an AGS that 
+// starts at H20 and Ends with F10.   This is to allow tracking with the 
+// septum magnets all turned on, and allowing the beam to pass through each
+// septum magnet just once. 
+//--------------------------------------------------------------------------
+//
+//  (THINGS GET A BIT MESSY BELOW HERE.  WILL CLEAN UP SOMEDAY....)
+// end of H20, just before location of H20, but without H20
+//
+NotH20: Drift,  L := LES;
+noH20:  LINE:= (NotH20, DSH20);
+//
+// from just before H20, without H20, to end of superE
+//
+H20toE20noes: LINE:= ( noH20, SUPERI, SUPERJ,SUPERK, SUPERL, SUPERA, 
+                       SUPERB, SUPERC, SUPERD, SUPERE);
+// start of superF to end of superH, just before H20
+//
+F1toH20nof5:  LINE:= (SUPERF, SUPERG, SUPERH1) ;
+//
+// 1 AGS with just H20, 1 AGS with no H20, 1 AGS with F5 and F10
+//
+ohfAGS: LINE:= (SUPERH2, SUPERI, SUPERJ, SUPERK, SUPERL, SUPERA, 
+                SUPERB, SUPERC, SUPERD, SUPERE, SUPERF, SUPERG, SUPERH1,
+                H20toE20noes, F1toH20nof5, H20toE20noes, 
+                SUPERF1, SUPERF2) ;
+
+hfAGS:   LINE:= (SUPERH2, SUPERI, SUPERJ, SUPERK, SUPERL, 
+                 AGS, AGS, 
+                 SUPERA, SUPERB, SUPERC, SUPERD, SUPERE, 
+                 SUPERF1, SUPERF2) ;
+//
+// for orbits, it is not a good idea to start at H20, start at A and go through.
+//
+bahfAGS: LINE:= (SUPERA, SUPERB, SUPERC, SUPERD, SUPERE, SUPERF, SUPERG, 
+                 SUPERH1,SUPERH2, SUPERI, SUPERJ, SUPERK, SUPERL, SUPERA, 
+                 SUPERB, SUPERC, SUPERD, SUPERE, SUPERF, SUPERG, SUPERH1,
+                 H20toE20noes, F1toH20nof5, H20toE20noes, 
+                 SUPERF1, SUPERF2, SUPERF3, SUPERG, SUPERH, SUPERI, SUPERJ, 
+                 SUPERK, SUPERL) ;
+
+ahfAGS: LINE:= (SUPERA, SUPERB, SUPERC, SUPERD, SUPERE, SUPERF, SUPERG, 
+                SUPERH1,SUPERH2, SUPERI, SUPERJ, SUPERK, SUPERL, 
+                AGS, AGS, 
+                SUPERA, SUPERB, SUPERC, SUPERD, SUPERE, 
+                SUPERF1, SUPERF2, SUPERF3, SUPERG, SUPERH, SUPERI, SUPERJ, 
+                SUPERK, SUPERL);
+
+cahfAGS:   LINE:= (haAGS, AGS, AGS, AGS);
+//
+// for tracking from F5 to F13.
+//
+f5tof13: LINE:= (SectF5F13);
+
+
+RETURN;
+
+END;

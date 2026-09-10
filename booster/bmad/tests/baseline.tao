@@ -1,0 +1,4 @@
+call, file = "../booster.bmad"
+place, ring
+show, lattice -attribute l
+quit
